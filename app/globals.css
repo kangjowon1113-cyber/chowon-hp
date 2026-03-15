@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+}
+
+.win98-outset {
+  border: 2px solid;
+  border-color: #fff #808080 #808080 #fff;
+}
+
+.win98-inset {
+  border: 2px solid;
+  border-color: #808080 #fff #fff #808080;
+}
+
+.desktop-grid {
+  background-color: #d7d0ff;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.25) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.retro-rnd .retro-resize-handle {
+  opacity: 0;
+  transition: opacity 120ms ease-in-out;
+  background: #fff;
+  border: 1px solid #808080;
+}
+
+.retro-rnd:hover .retro-resize-handle {
+  opacity: 1;
+}
+
+.retro-rnd .retro-resize-handle-top,
+.retro-rnd .retro-resize-handle-bottom {
+  height: 7px !important;
+}
+
+.retro-rnd .retro-resize-handle-left,
+.retro-rnd .retro-resize-handle-right {
+  width: 7px !important;
+}
+
+.retro-rnd .retro-resize-handle-top-left,
+.retro-rnd .retro-resize-handle-top-right,
+.retro-rnd .retro-resize-handle-bottom-left,
+.retro-rnd .retro-resize-handle-bottom-right {
+  width: 10px !important;
+  height: 10px !important;
+}
+
