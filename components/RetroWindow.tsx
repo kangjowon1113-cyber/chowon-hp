@@ -30,12 +30,36 @@ export function RetroWindow({
 }: RetroWindowProps) {
   if (!isOpen) return null;
 
+  const handleZ = 50;
+
+  const resizeHandleStyles = {
+    top: { height: 10, top: -5, zIndex: handleZ, pointerEvents: "auto" },
+    right: { width: 10, right: -5, zIndex: handleZ, pointerEvents: "auto" },
+    bottom: { height: 10, bottom: -5, zIndex: handleZ, pointerEvents: "auto" },
+    left: { width: 10, left: -5, zIndex: handleZ, pointerEvents: "auto" },
+    topRight: { width: 18, height: 18, top: -9, right: -9, zIndex: handleZ, pointerEvents: "auto" },
+    bottomRight: { width: 18, height: 18, bottom: -9, right: -9, zIndex: handleZ, pointerEvents: "auto" },
+    bottomLeft: { width: 18, height: 18, bottom: -9, left: -9, zIndex: handleZ, pointerEvents: "auto" },
+    topLeft: { width: 18, height: 18, top: -9, left: -9, zIndex: handleZ, pointerEvents: "auto" },
+  } as const;
+
   return (
     <Rnd
       className="retro-rnd absolute"
       style={{ zIndex }}
       bounds="parent"
       dragHandleClassName="retro-window-handle"
+      cancel=".retro-resize-handle"
+      enableResizing={{
+        top: true,
+        right: true,
+        bottom: true,
+        left: true,
+        topRight: true,
+        bottomRight: true,
+        bottomLeft: true,
+        topLeft: true,
+      }}
       default={{
         x: defaultPosition.x,
         y: defaultPosition.y,
@@ -46,6 +70,8 @@ export function RetroWindow({
       minHeight={minSize.height}
       onDragStart={onFocus}
       onResizeStart={onFocus}
+      resizeHandleStyles={resizeHandleStyles}
+      resizeHandleWrapperStyle={{ zIndex: handleZ, pointerEvents: "none" }}
       resizeHandleClasses={{
         top: "retro-resize-handle retro-resize-handle-top",
         right: "retro-resize-handle retro-resize-handle-right",
@@ -58,7 +84,7 @@ export function RetroWindow({
       }}
     >
       <section
-        className="win98-outset flex h-full w-full flex-col bg-winGrey shadow-[6px_6px_0_#5a5a5a]"
+        className="win98-outset flex h-full min-h-0 w-full flex-col bg-winGrey shadow-[6px_6px_0_#5a5a5a]"
         onMouseDown={onFocus}
       >
         <header
@@ -88,8 +114,8 @@ export function RetroWindow({
           </div>
         </header>
 
-        <div className="flex-1 p-3">
-          <div className="win98-inset h-full overflow-y-auto bg-white p-3 text-sm leading-6">
+        <div className="min-h-0 flex-1 p-3">
+          <div className="win98-inset h-full min-h-0 overflow-y-auto bg-white p-3 text-sm leading-6">
             {children}
           </div>
         </div>

@@ -51,19 +51,43 @@ body {
 
 .retro-rnd .retro-resize-handle-top,
 .retro-rnd .retro-resize-handle-bottom {
-  height: 7px !important;
+  width: 100% !important;
+  height: 10px !important;
 }
 
 .retro-rnd .retro-resize-handle-left,
 .retro-rnd .retro-resize-handle-right {
-  width: 7px !important;
+  width: 10px !important;
+  height: 100% !important;
 }
 
 .retro-rnd .retro-resize-handle-top-left,
 .retro-rnd .retro-resize-handle-top-right,
 .retro-rnd .retro-resize-handle-bottom-left,
 .retro-rnd .retro-resize-handle-bottom-right {
-  width: 10px !important;
-  height: 10px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.retro-scrollbar {
+  scrollbar-width: auto;
+  scrollbar-color: #8a8a8a #d4d0c8;
+}
+
+.retro-scrollbar::-webkit-scrollbar {
+  width: 14px;
+}
+
+.retro-scrollbar::-webkit-scrollbar-track {
+  background: #d4d0c8;
+  border-left: 1px solid #8a8a8a;
+}
+
+.retro-scrollbar::-webkit-scrollbar-thumb {
+  background: #b6b6b6;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #666666;
+  border-bottom: 1px solid #666666;
 }
 

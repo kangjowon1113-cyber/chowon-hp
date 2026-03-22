@@ -7,6 +7,8 @@ type HomeWindowProps = {
   isOpen: boolean;
   zIndex: number;
   defaultPosition: { x: number; y: number };
+  defaultSize?: { width: number; height: number };
+  minSize?: { width: number; height: number };
   onClose: () => void;
   onFocus: () => void;
 };
@@ -31,10 +33,21 @@ const stats = [
   { label: "Visual Taste", value: 90, color: "bg-[#f9c74f]" },
 ];
 
+/** Candy-pop button bg + keyword text color (user-specified hex per tag). */
+const profileTags = [
+  { label: "#HCI_Researcher", textColor: "#98FF98", bgColor: "#FF1493" },
+  { label: "#Product_Manager", textColor: "#FF69B4", bgColor: "#98FF98" },
+  { label: "#Architecture_Designer", textColor: "#FF8C00", bgColor: "#E6B6FF" },
+  { label: "#Music", textColor: "#E6E6FA", bgColor: "#FF6B35" },
+  { label: "#Maximalist", textColor: "#FFF700", bgColor: "#BA55D3" },
+] as const;
+
 export function HomeWindow({
   isOpen,
   zIndex,
   defaultPosition,
+  defaultSize = { width: 920, height: 580 },
+  minSize = { width: 480, height: 340 },
   onClose,
   onFocus,
 }: HomeWindowProps) {
@@ -52,13 +65,13 @@ export function HomeWindow({
       zIndex={zIndex}
       gradientColors={["#FF69B4", "#39FF14"]}
       defaultPosition={defaultPosition}
-      defaultSize={{ width: 1320, height: 760 }}
-      minSize={{ width: 900, height: 520 }}
+      defaultSize={defaultSize}
+      minSize={minSize}
       onClose={onClose}
       onFocus={onFocus}
     >
-      <div className="grid h-full grid-cols-2 gap-3">
-        <section className="win98-inset grid h-full grid-cols-[130px_1fr] gap-2 bg-[#f5f8ff] p-2">
+      <div className="grid h-full min-h-0 grid-cols-2 gap-3">
+        <section className="win98-inset grid min-h-0 h-full grid-cols-[130px_1fr] gap-2 bg-[#f5f8ff] p-2">
           <div className="win98-inset flex flex-col gap-2 bg-white p-2">
             {photoItems.map((photo) => (
               <button
@@ -101,18 +114,37 @@ export function HomeWindow({
           </div>
         </section>
 
-        <section className="flex h-full flex-col gap-3">
-          <article className="win98-inset bg-white p-3">
+        <section className="flex min-h-0 h-full flex-col gap-3">
+          <article className="win98-inset shrink-0 bg-white p-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-[#6a5acd]">Profile Card</p>
             <h3 className="mt-1 text-2xl font-black tracking-wide">CHOWON</h3>
-            <p className="text-sm font-bold text-[#4f4f7f]">UXR / PM</p>
+            <p className="text-sm font-bold text-[#4f4f7f]">HCI Researcher · Product Manager · Seoul</p>
             <p className="mt-2 text-sm leading-5">
-              User empathy, playful systems, and high-teen retro visuals for memorable product
-              experiences.
+              I&apos;m an HCI researcher and Product Manager based in Seoul, passionate about
+              enhancing social and emotional connections in digital spaces.
             </p>
+            <p className="mt-2 text-sm leading-5">
+              With a background in interior architecture, I&apos;ve long been fascinated by how
+              physical environments shape human experience — a perspective I now bring to designing
+              online interactions. Beyond the screen, I find balance in music, experimenting in the
+              kitchen, and collecting moments from the world with curiosity.
+            </p>
+            <div className="mt-3 border-t-2 border-[#c0c0c0] pt-3">
+              <div className="flex flex-wrap gap-2">
+                {profileTags.map((item) => (
+                  <span
+                    key={item.label}
+                    className="win98-outset inline-block px-2 py-1 text-[11px] font-bold tracking-wide shadow-[inset_0_-1px_0_rgba(0,0,0,0.12)]"
+                    style={{ backgroundColor: item.bgColor, color: item.textColor }}
+                  >
+                    {item.label}
+                  </span>
+                ))}
+              </div>
+            </div>
           </article>
 
-          <article className="win98-inset flex-1 bg-white p-3">
+          <article className="win98-inset min-h-0 flex-1 overflow-y-auto bg-white p-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-[#6a5acd]">RPG Stats</p>
             <div className="mt-3 space-y-3">
               {stats.map((stat) => (
