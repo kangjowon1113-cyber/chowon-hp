@@ -1,7 +1,7 @@
 "use client";
 
 import { FileText, Folder } from "lucide-react";
-import { useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { HomeWindow } from "@/components/HomeWindow";
 import { MyWorks, WORK_PROJECTS } from "@/components/MyWorks";
 import { RetroWindow } from "@/components/RetroWindow";
@@ -32,6 +32,28 @@ const initialOpenState: Record<WindowKey, boolean> = {
   life: false,
 };
 
+const stickerImages = [
+  "/stickers/Group 1.png",
+  "/stickers/Group 2.png",
+  "/stickers/Star 1.png",
+  "/stickers/Star 2.png",
+  "/stickers/Star 3.png",
+  "/stickers/Vector 1.png",
+  "/stickers/Vector 2.png",
+  "/stickers/Vector 3.png",
+] as const;
+
+const INITIAL_STICKER_COUNT = 40;
+
+type Sticker = {
+  id: string;
+  src: string;
+  x: number;
+  y: number;
+  rotation: number;
+  size: number;
+};
+
 export function Desktop() {
   const [openState, setOpenState] = useState(initialOpenState);
   const [zIndex, setZIndex] = useState(initialZIndex);
@@ -45,6 +67,21 @@ export function Desktop() {
   } | null>(null);
   const [projectWindowState, setProjectWindowState] = useState<Record<string, boolean>>({});
   const [projectWindowZ, setProjectWindowZ] = useState<Record<string, number>>({});
+  const [stickers, setStickers] = useState<Sticker[]>([]);
+  const hasSeededInitialStickers = useRef(false);
+
+  const getStickerSize = (src: string, baseSize: number) => {
+    return src === "/stickers/Group 2.png" ? Math.max(14, Math.round(baseSize / 3)) : baseSize;
+  };
+
+  const createSticker = (src: string, x: number, y: number, size: number): Sticker => ({
+    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    src,
+    x,
+    y,
+    rotation: Math.floor(Math.random() * 24) - 12,
+    size,
+  });
 
   const openWindow = (key: WindowKey) => {
     setMaxZ((prev) => {
@@ -92,6 +129,26 @@ export function Desktop() {
     });
   };
 
+  const placeRandomSticker = (event: MouseEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const baseSize = 44 + Math.floor(Math.random() * 26);
+    const rawX = event.clientX - rect.left;
+    const rawY = event.clientY - rect.top;
+    const src = stickerImages[Math.floor(Math.random() * stickerImages.length)];
+    const size = getStickerSize(src, baseSize);
+    const x = Math.min(rect.width - size / 2, Math.max(size / 2, rawX));
+    const y = Math.min(rect.height - size / 2, Math.max(size / 2, rawY));
+
+    setStickers((prev) => [...prev, createSticker(src, x, y, size)]);
+  };
+
+  const handleDesktopBackgroundMouseDown = (event: MouseEvent<HTMLElement>) => {
+    if (event.target === event.currentTarget) {
+      setSelectedIcon(null);
+      placeRandomSticker(event);
+    }
+  };
+
   useEffect(() => {
     setOpenState((prev) => ({ ...prev, home: true }));
     const targetWidth = 1104;
@@ -108,22 +165,52 @@ export function Desktop() {
     });
   }, []);
 
+  useEffect(() => {
+    if (hasSeededInitialStickers.current) {
+      return;
+    }
+
+    hasSeededInitialStickers.current = true;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const generated: Sticker[] = [];
+    const maxAttempts = INITIAL_STICKER_COUNT * 40;
+
+    let attempts = 0;
+    while (generated.length < INITIAL_STICKER_COUNT && attempts < maxAttempts) {
+      attempts += 1;
+      const src = stickerImages[Math.floor(Math.random() * stickerImages.length)];
+      const baseSize = 44 + Math.floor(Math.random() * 26);
+      const size = getStickerSize(src, baseSize);
+      const x = size / 2 + Math.random() * Math.max(1, vw - size);
+      const y = size / 2 + Math.random() * Math.max(1, vh - size);
+
+      const collidesTooMuch = generated.some((sticker) => {
+        const dx = sticker.x - x;
+        const dy = sticker.y - y;
+        const distance = Math.hypot(dx, dy);
+        const minDistance = (sticker.size + size) * 0.28;
+        return distance < minDistance;
+      });
+
+      if (collidesTooMuch) {
+        continue;
+      }
+
+      generated.push(createSticker(src, x, y, size));
+    }
+
+    setStickers(generated);
+  }, []);
+
   return (
     <main
       className="desktop-grid relative h-screen w-screen overflow-hidden font-system98 text-[#111]"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) {
-          setSelectedIcon(null);
-        }
-      }}
+      onMouseDown={handleDesktopBackgroundMouseDown}
     >
       <section
         className="absolute left-4 top-5 z-10 flex flex-col gap-5"
-        onMouseDown={(event) => {
-          if (event.target === event.currentTarget) {
-            setSelectedIcon(null);
-          }
-        }}
+        onMouseDown={handleDesktopBackgroundMouseDown}
       >
         {desktopItems.map((item) => (
           <button
@@ -162,13 +249,28 @@ export function Desktop() {
         ))}
       </section>
 
+      <div className="pointer-events-none absolute inset-0 z-[1]">
+        {stickers.map((sticker) => (
+          <img
+            key={sticker.id}
+            src={sticker.src}
+            alt=""
+            className="absolute select-none"
+            draggable={false}
+            style={{
+              left: `${sticker.x}px`,
+              top: `${sticker.y}px`,
+              width: `${sticker.size}px`,
+              transform: `translate(-50%, -50%) rotate(${sticker.rotation}deg)`,
+              filter: "drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.25))",
+            }}
+          />
+        ))}
+      </div>
+
       <div
         className="absolute inset-0 min-h-0 pb-10"
-        onMouseDown={(event) => {
-          if (event.target === event.currentTarget) {
-            setSelectedIcon(null);
-          }
-        }}
+        onMouseDown={handleDesktopBackgroundMouseDown}
       >
         {homeLayout ? (
           <HomeWindow
@@ -212,7 +314,49 @@ export function Desktop() {
             onClose={() => closeProjectWindow(project.id)}
             onFocus={() => focusProjectWindow(project.id)}
           >
-            <div className="h-full w-full bg-white" />
+            {project.id === "p1" ? (
+              <section className="h-full w-full overflow-y-auto bg-white p-5 text-[#1b1b1b]">
+                <h2 className="text-xl font-bold text-[#2f2f2f]">
+                  Personalized Dating Applications for Finding True Love
+                </h2>
+
+                <p className="mt-3 text-[12px] font-bold uppercase tracking-[0.06em] text-[#6a5acd]">
+                  #CSCW2024 #IDI #AI Ethics
+                </p>
+
+                <p className="mt-4 text-sm">
+                  <span className="font-bold">Paper URL: </span>
+                  <a
+                    href="https://dl.acm.org/doi/abs/10.1145/3687025"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#0000ee] underline"
+                  >
+                    https://dl.acm.org/doi/abs/10.1145/3687025
+                  </a>
+                </p>
+
+                <div className="mt-6">
+                  <h3 className="text-base font-bold text-[#2f2f2f]">Key Insights</h3>
+                  <ul className="mt-2 list-disc space-y-2 pl-6 text-sm leading-6">
+                    <li>
+                      Dating apps are more often used as a means for self-evaluation and
+                      validation, rather than for forming meaningful connections.
+                    </li>
+                    <li>
+                      Effectively expressing one&apos;s unique traits and personal strengths is
+                      critical for successful matching.
+                    </li>
+                    <li>
+                      Profiles and matching mechanisms that dynamically adapt based on user
+                      interest and compatibility can enable more personalized dating experiences.
+                    </li>
+                  </ul>
+                </div>
+              </section>
+            ) : (
+              <div className="h-full w-full bg-white" />
+            )}
           </RetroWindow>
         ))}
 
