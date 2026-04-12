@@ -1,0 +1,128 @@
+"use client";
+
+import { type ReactNode } from "react";
+import { Rnd } from "react-rnd";
+
+type FloatingCanvasWindowProps = {
+  title: string;
+  isOpen: boolean;
+  zIndex: number;
+  defaultPosition: { x: number; y: number };
+  defaultSize: { width: number; height: number };
+  minSize?: { width: number; height: number };
+  surfaceMode?: "translucent" | "solid";
+  onClose: () => void;
+  onFocus: () => void;
+  children?: ReactNode;
+};
+
+export function FloatingCanvasWindow({
+  title,
+  isOpen,
+  zIndex,
+  defaultPosition,
+  defaultSize,
+  minSize = { width: 720, height: 620 },
+  surfaceMode = "translucent",
+  onClose,
+  onFocus,
+  children,
+}: FloatingCanvasWindowProps) {
+  if (!isOpen) return null;
+
+  const handleZ = 50;
+
+  const resizeHandleStyles = {
+    top: { height: 10, top: -5, zIndex: handleZ, pointerEvents: "auto" },
+    right: { width: 10, right: -5, zIndex: handleZ, pointerEvents: "auto" },
+    bottom: { height: 10, bottom: -5, zIndex: handleZ, pointerEvents: "auto" },
+    left: { width: 10, left: -5, zIndex: handleZ, pointerEvents: "auto" },
+    topRight: { width: 18, height: 18, top: -9, right: -9, zIndex: handleZ, pointerEvents: "auto" },
+    bottomRight: {
+      width: 18,
+      height: 18,
+      bottom: -9,
+      right: -9,
+      zIndex: handleZ,
+      pointerEvents: "auto",
+    },
+    bottomLeft: {
+      width: 18,
+      height: 18,
+      bottom: -9,
+      left: -9,
+      zIndex: handleZ,
+      pointerEvents: "auto",
+    },
+    topLeft: { width: 18, height: 18, top: -9, left: -9, zIndex: handleZ, pointerEvents: "auto" },
+  } as const;
+
+  return (
+    <Rnd
+      className="retro-rnd absolute"
+      style={{ zIndex }}
+      bounds="parent"
+      dragHandleClassName="floating-canvas-drag-handle"
+      cancel=".retro-resize-handle, button"
+      enableResizing={{
+        top: true,
+        right: true,
+        bottom: true,
+        left: true,
+        topRight: true,
+        bottomRight: true,
+        bottomLeft: true,
+        topLeft: true,
+      }}
+      default={{
+        x: defaultPosition.x,
+        y: defaultPosition.y,
+        width: defaultSize.width,
+        height: defaultSize.height,
+      }}
+      minWidth={minSize.width}
+      minHeight={minSize.height}
+      onDragStart={onFocus}
+      onResizeStart={onFocus}
+      resizeHandleStyles={resizeHandleStyles}
+      resizeHandleWrapperStyle={{ zIndex: handleZ, pointerEvents: "none" }}
+      resizeHandleClasses={{
+        top: "retro-resize-handle retro-resize-handle-top",
+        right: "retro-resize-handle retro-resize-handle-right",
+        bottom: "retro-resize-handle retro-resize-handle-bottom",
+        left: "retro-resize-handle retro-resize-handle-left",
+        topRight: "retro-resize-handle retro-resize-handle-top-right",
+        bottomRight: "retro-resize-handle retro-resize-handle-bottom-right",
+        bottomLeft: "retro-resize-handle retro-resize-handle-bottom-left",
+        topLeft: "retro-resize-handle retro-resize-handle-top-left",
+      }}
+    >
+      <section
+        className={`flex h-full w-full flex-col rounded-[36px] p-4 shadow-[0_20px_48px_rgba(0,0,0,0.24)] ${
+          surfaceMode === "solid" ? "bg-[#f4f0f4]" : "bg-[#efe8ee]/96 backdrop-blur-sm"
+        }`}
+      >
+        <div className="flex items-center justify-between pb-3">
+          <div
+            className="floating-canvas-drag-handle flex min-w-0 flex-1 cursor-grab items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6c6377] active:cursor-grabbing"
+            onMouseDown={onFocus}
+          >
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ff8fb1]" />
+            <span className="truncate">{title}</span>
+          </div>
+
+          <button
+            type="button"
+            aria-label={`Close ${title}`}
+            className="ml-3 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-lg font-bold text-[#ff4b4b] shadow-[0_4px_14px_rgba(0,0,0,0.16)]"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="min-h-0 flex-1">{children}</div>
+      </section>
+    </Rnd>
+  );
+}

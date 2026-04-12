@@ -2,10 +2,12 @@
 
 import { FileText, Folder } from "lucide-react";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
 import { HomeWindow } from "@/components/HomeWindow";
 import { MyWorks, WORK_PROJECTS } from "@/components/MyWorks";
 import { RetroWindow } from "@/components/RetroWindow";
 import { Taskbar } from "@/components/Taskbar";
+import { DatingAlgorithmsPrototype } from "@/components/works/debugging-dating-algorithms/DatingAlgorithmsPrototype";
 
 type FolderKey = "work" | "create" | "life";
 type IconKey = "about" | FolderKey;
@@ -67,6 +69,9 @@ export function Desktop() {
   } | null>(null);
   const [projectWindowState, setProjectWindowState] = useState<Record<string, boolean>>({});
   const [projectWindowZ, setProjectWindowZ] = useState<Record<string, number>>({});
+  const [projectWindowSurface, setProjectWindowSurface] = useState<Record<string, "translucent" | "solid">>(
+    {},
+  );
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const hasSeededInitialStickers = useRef(false);
 
@@ -114,10 +119,12 @@ export function Desktop() {
       setProjectWindowZ((old) => ({ ...old, [projectId]: next }));
       return next;
     });
+    setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
     setProjectWindowState((prev) => ({ ...prev, [projectId]: true }));
   };
 
   const closeProjectWindow = (projectId: string) => {
+    setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
     setProjectWindowState((prev) => ({ ...prev, [projectId]: false }));
   };
 
@@ -301,64 +308,43 @@ export function Desktop() {
           <MyWorks onOpenProject={openProjectWindow} />
         </RetroWindow>
 
-        {WORK_PROJECTS.map((project, index) => (
-          <RetroWindow
-            key={project.id}
-            title={project.title}
-            isOpen={Boolean(projectWindowState[project.id])}
-            zIndex={projectWindowZ[project.id] ?? 10}
-            gradientColors={["#FF1493", "#FF69B4"]}
-            defaultPosition={{ x: 220 + index * 26, y: 110 + index * 24 }}
-            defaultSize={{ width: 806, height: 529 }}
-            minSize={{ width: 529, height: 328 }}
-            onClose={() => closeProjectWindow(project.id)}
-            onFocus={() => focusProjectWindow(project.id)}
-          >
-            {project.id === "p1" ? (
-              <section className="h-full w-full overflow-y-auto bg-white p-5 text-[#1b1b1b]">
-                <h2 className="text-xl font-bold text-[#2f2f2f]">
-                  Personalized Dating Applications for Finding True Love
-                </h2>
-
-                <p className="mt-3 text-[12px] font-bold uppercase tracking-[0.06em] text-[#6a5acd]">
-                  #CSCW2024 #IDI #AI Ethics
-                </p>
-
-                <p className="mt-4 text-sm">
-                  <span className="font-bold">Paper URL: </span>
-                  <a
-                    href="https://dl.acm.org/doi/abs/10.1145/3687025"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#0000ee] underline"
-                  >
-                    https://dl.acm.org/doi/abs/10.1145/3687025
-                  </a>
-                </p>
-
-                <div className="mt-6">
-                  <h3 className="text-base font-bold text-[#2f2f2f]">Key Insights</h3>
-                  <ul className="mt-2 list-disc space-y-2 pl-6 text-sm leading-6">
-                    <li>
-                      Dating apps are more often used as a means for self-evaluation and
-                      validation, rather than for forming meaningful connections.
-                    </li>
-                    <li>
-                      Effectively expressing one&apos;s unique traits and personal strengths is
-                      critical for successful matching.
-                    </li>
-                    <li>
-                      Profiles and matching mechanisms that dynamically adapt based on user
-                      interest and compatibility can enable more personalized dating experiences.
-                    </li>
-                  </ul>
-                </div>
-              </section>
-            ) : (
+        {WORK_PROJECTS.map((project, index) =>
+          project.id === "p1" ? (
+            <FloatingCanvasWindow
+              key={project.id}
+              title={project.title}
+              isOpen={Boolean(projectWindowState[project.id])}
+              zIndex={projectWindowZ[project.id] ?? 10}
+              defaultPosition={{ x: 300, y: 36 }}
+              defaultSize={{ width: 1520, height: 940 }}
+              minSize={{ width: 1320, height: 820 }}
+              surfaceMode={projectWindowSurface[project.id] ?? "translucent"}
+              onClose={() => closeProjectWindow(project.id)}
+              onFocus={() => focusProjectWindow(project.id)}
+            >
+              <DatingAlgorithmsPrototype
+                onSurfaceModeChange={(surfaceMode) =>
+                  setProjectWindowSurface((prev) => ({ ...prev, [project.id]: surfaceMode }))
+                }
+              />
+            </FloatingCanvasWindow>
+          ) : (
+            <RetroWindow
+              key={project.id}
+              title={project.title}
+              isOpen={Boolean(projectWindowState[project.id])}
+              zIndex={projectWindowZ[project.id] ?? 10}
+              gradientColors={["#FF1493", "#FF69B4"]}
+              defaultPosition={{ x: 220 + index * 26, y: 110 + index * 24 }}
+              defaultSize={{ width: 806, height: 529 }}
+              minSize={{ width: 529, height: 328 }}
+              onClose={() => closeProjectWindow(project.id)}
+              onFocus={() => focusProjectWindow(project.id)}
+            >
               <div className="h-full w-full bg-white" />
-            )}
-          </RetroWindow>
-        ))}
+            </RetroWindow>
+          ),
+        )}
 
         <RetroWindow
           title="Create"
