@@ -11,6 +11,7 @@ type FloatingCanvasWindowProps = {
   defaultSize: { width: number; height: number };
   minSize?: { width: number; height: number };
   surfaceMode?: "translucent" | "solid";
+  frameMode?: "rounded" | "window";
   onClose: () => void;
   onFocus: () => void;
   children?: ReactNode;
@@ -24,6 +25,7 @@ export function FloatingCanvasWindow({
   defaultSize,
   minSize = { width: 720, height: 620 },
   surfaceMode = "translucent",
+  frameMode = "rounded",
   onClose,
   onFocus,
   children,
@@ -97,32 +99,66 @@ export function FloatingCanvasWindow({
         topLeft: "retro-resize-handle retro-resize-handle-top-left",
       }}
     >
-      <section
-        className={`flex h-full w-full flex-col rounded-[36px] p-4 shadow-[0_20px_48px_rgba(0,0,0,0.24)] ${
-          surfaceMode === "solid" ? "bg-[#f4f0f4]" : "bg-[#efe8ee]/96 backdrop-blur-sm"
-        }`}
-      >
-        <div className="flex items-center justify-between pb-3">
-          <div
-            className="floating-canvas-drag-handle flex min-w-0 flex-1 cursor-grab items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6c6377] active:cursor-grabbing"
-            onMouseDown={onFocus}
-          >
-            <span className="h-2.5 w-2.5 rounded-full bg-[#ff8fb1]" />
-            <span className="truncate">{title}</span>
+      {frameMode === "window" ? (
+        <section
+          className={`win98-outset flex h-full w-full flex-col p-[3px] shadow-[8px_8px_0_rgba(0,0,0,0.22)] ${
+            surfaceMode === "solid" ? "bg-[#d4d0c8]" : "bg-[#efe8ee]/96 backdrop-blur-sm"
+          }`}
+        >
+          <header className="floating-canvas-drag-handle flex cursor-grab items-center justify-between bg-[linear-gradient(90deg,#ff5db1,#39ff14)] px-3 py-2 active:cursor-grabbing">
+            <h2 className="truncate pr-3 text-xs font-bold uppercase tracking-[0.12em] text-white">
+              {title}
+            </h2>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label={`Maximize ${title}`}
+                className="h-3.5 w-3.5 rounded-full border border-black/30 bg-[#52d96b]"
+              />
+              <button
+                type="button"
+                aria-label={`Minimize ${title}`}
+                className="h-3.5 w-3.5 rounded-full border border-black/30 bg-[#ffd43b]"
+              />
+              <button
+                type="button"
+                aria-label={`Close ${title}`}
+                className="h-3.5 w-3.5 rounded-full border border-black/30 bg-[#ff5f57]"
+                onClick={onClose}
+              />
+            </div>
+          </header>
+
+          <div className="min-h-0 flex-1 bg-white p-3">{children}</div>
+        </section>
+      ) : (
+        <section
+          className={`flex h-full w-full flex-col rounded-[36px] p-4 shadow-[0_20px_48px_rgba(0,0,0,0.24)] ${
+            surfaceMode === "solid" ? "bg-[#f4f0f4]" : "bg-[#efe8ee]/96 backdrop-blur-sm"
+          }`}
+        >
+          <div className="flex items-center justify-between pb-3">
+            <div
+              className="floating-canvas-drag-handle flex min-w-0 flex-1 cursor-grab items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#6c6377] active:cursor-grabbing"
+              onMouseDown={onFocus}
+            >
+              <span className="h-2.5 w-2.5 rounded-full bg-[#ff8fb1]" />
+              <span className="truncate">{title}</span>
+            </div>
+
+            <button
+              type="button"
+              aria-label={`Close ${title}`}
+              className="ml-3 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-lg font-bold text-[#ff4b4b] shadow-[0_4px_14px_rgba(0,0,0,0.16)]"
+              onClick={onClose}
+            >
+              ×
+            </button>
           </div>
 
-          <button
-            type="button"
-            aria-label={`Close ${title}`}
-            className="ml-3 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-lg font-bold text-[#ff4b4b] shadow-[0_4px_14px_rgba(0,0,0,0.16)]"
-            onClick={onClose}
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="min-h-0 flex-1">{children}</div>
-      </section>
+          <div className="min-h-0 flex-1">{children}</div>
+        </section>
+      )}
     </Rnd>
   );
 }

@@ -37,9 +37,13 @@ const profileOptions = [
 
 type DatingAlgorithmsPrototypeProps = {
   onSurfaceModeChange?: (surfaceMode: "translucent" | "solid") => void;
+  onFrameModeChange?: (frameMode: "rounded" | "window") => void;
 };
 
-export function DatingAlgorithmsPrototype({ onSurfaceModeChange }: DatingAlgorithmsPrototypeProps) {
+export function DatingAlgorithmsPrototype({
+  onSurfaceModeChange,
+  onFrameModeChange,
+}: DatingAlgorithmsPrototypeProps) {
   const [screen, setScreen] = useState<"home" | "candidate" | "compare" | "legacy">("home");
   const [activeMatchId, setActiveMatchId] = useState<(typeof matchProfiles)[number]["id"]>("cha-eunwoo");
   const [pendingLikeProfileId, setPendingLikeProfileId] = useState<
@@ -52,7 +56,8 @@ export function DatingAlgorithmsPrototype({ onSurfaceModeChange }: DatingAlgorit
 
   useEffect(() => {
     onSurfaceModeChange?.(screen === "legacy" ? "solid" : "translucent");
-  }, [onSurfaceModeChange, screen]);
+    onFrameModeChange?.(screen === "legacy" ? "window" : "rounded");
+  }, [onFrameModeChange, onSurfaceModeChange, screen]);
 
   const handleConfirmLike = () => {
     if (activeMatchId === "cha-eunwoo") {
@@ -67,23 +72,43 @@ export function DatingAlgorithmsPrototype({ onSurfaceModeChange }: DatingAlgorit
   };
 
   if (screen === "legacy") {
-    return (
-      <section className="h-full w-full overflow-hidden rounded-[28px] bg-white shadow-[0_8px_18px_rgba(0,0,0,0.08)]">
-        <LegacyDatingAlgorithmsContent />
-      </section>
-    );
+    return <LegacyDatingAlgorithmsContent />;
   }
 
   return (
     <section className="flex h-full w-full items-center justify-center">
+      <button
+        type="button"
+        onClick={() => setScreen("legacy")}
+        className="absolute right-4 top-4 z-20 rounded-full bg-white/80 px-4 py-2 text-xs font-bold text-[#4b4550] shadow-[0_4px_12px_rgba(0,0,0,0.12)] backdrop-blur-sm transition hover:bg-white"
+      >
+        Move to Study →
+      </button>
       <div
-        className={`grid h-full w-full gap-6 ${
-          screen === "compare" ? "grid-cols-[minmax(420px,480px)_minmax(840px,1fr)]" : "place-items-center"
+        className={`grid h-full w-full min-w-0 gap-5 ${
+          screen === "compare"
+            ? "grid-cols-[minmax(250px,340px)_minmax(0,1fr)] items-center"
+            : "place-items-center"
         }`}
       >
-        <div className="flex h-full min-h-0 items-center justify-center">
-          <div className="relative aspect-[375/814] h-full max-h-full w-full max-w-[450px] rounded-[42px] border-[10px] border-[#c7c7cc] bg-[#c7c7cc] p-[8px] shadow-[0_18px_38px_rgba(0,0,0,0.22)]">
+        <div className="flex h-full min-h-0 min-w-0 items-center justify-center">
+          <div className="relative aspect-[375/814] h-full max-h-full w-full max-w-[336px] rounded-[42px] border-[10px] border-[#c7c7cc] bg-[#c7c7cc] p-[8px] shadow-[0_18px_38px_rgba(0,0,0,0.22)]">
             <div className="pointer-events-none absolute left-1/2 top-[10px] z-20 h-[22px] w-[132px] -translate-x-1/2 rounded-full bg-[#8f8f95]" />
+
+            {/* Tap hint — floats to the right of the phone */}
+            {screen === "home" ? (
+              <div className="pointer-events-none absolute left-[calc(100%+20px)] top-[76%] -translate-y-1/2 flex items-center gap-3 z-30">
+                <svg width="40" height="26" viewBox="0 0 40 26" fill="none" className="shrink-0">
+                  <path d="M2 13 L36 13 M26 4 L36 13 L26 22" stroke="#ff7ea7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <div className="whitespace-nowrap rounded-[8px] border-2 border-[#ff7ea7] bg-white px-5 py-3 shadow-[0_6px_20px_rgba(255,126,167,0.25)]">
+                  <p className="text-[17px] font-bold uppercase tracking-[0.14em] text-[#ff7ea7]">
+                    Tap on &ldquo;Get Started&rdquo;
+                  </p>
+                </div>
+              </div>
+            ) : null}
+
             <div className="h-full w-full overflow-hidden rounded-[32px] bg-white">
               <div className="relative h-full w-full">
                 {screen === "home" ? (
@@ -128,17 +153,18 @@ export function DatingAlgorithmsPrototype({ onSurfaceModeChange }: DatingAlgorit
               </div>
             </div>
           </div>
+
         </div>
 
         {screen === "compare" ? (
-          <aside className="flex h-full min-h-0 flex-col justify-center">
+          <aside className="flex h-full min-h-0 min-w-0 flex-col justify-center">
             <div className="mb-5 flex justify-center">
-              <p className="rounded-[18px] bg-white px-5 py-3 text-center text-[20px] font-black leading-tight text-[#4b4550] shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
+              <p className="rounded-[18px] border-[4px] border-[#ff7ea7] bg-white px-5 py-3 text-center text-[20px] font-black leading-tight text-[#4b4550] shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
                 Which profile would you like to use for your match?
               </p>
             </div>
 
-            <div className="grid w-full grid-cols-3 gap-5">
+            <div className="grid w-full min-w-0 grid-cols-3 gap-3">
               {profileOptions.map((option) => {
                 return (
                   <button
@@ -146,13 +172,13 @@ export function DatingAlgorithmsPrototype({ onSurfaceModeChange }: DatingAlgorit
                     type="button"
                     aria-label={option.label}
                     onClick={() => setPendingLikeProfileId(option.id)}
-                    className="overflow-hidden rounded-[32px] border-[7px] border-[#dad3d9] bg-white/90 p-[7px] shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition hover:border-[#ffb1c8]"
+                    className="min-w-0 overflow-hidden rounded-[30px] border-[6px] border-[#dad3d9] bg-white/90 p-[7px] shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition hover:border-[#ffb1c8]"
                   >
-                    <div className="overflow-hidden rounded-[24px] bg-white">
+                    <div className="overflow-hidden rounded-[22px] bg-white">
                       <img
                         src={option.src}
                         alt={option.label}
-                        className="aspect-[375/814] w-full object-cover object-top"
+                        className="aspect-[375/814] w-full scale-110 object-cover object-top"
                         draggable={false}
                       />
                     </div>

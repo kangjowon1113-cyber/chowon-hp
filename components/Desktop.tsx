@@ -56,6 +56,13 @@ type Sticker = {
   size: number;
 };
 
+type ProjectWindowLayout = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 export function Desktop() {
   const [openState, setOpenState] = useState(initialOpenState);
   const [zIndex, setZIndex] = useState(initialZIndex);
@@ -70,6 +77,12 @@ export function Desktop() {
   const [projectWindowState, setProjectWindowState] = useState<Record<string, boolean>>({});
   const [projectWindowZ, setProjectWindowZ] = useState<Record<string, number>>({});
   const [projectWindowSurface, setProjectWindowSurface] = useState<Record<string, "translucent" | "solid">>(
+    {},
+  );
+  const [projectWindowFrame, setProjectWindowFrame] = useState<Record<string, "rounded" | "window">>(
+    {},
+  );
+  const [projectWindowLayout, setProjectWindowLayout] = useState<Record<string, ProjectWindowLayout>>(
     {},
   );
   const [stickers, setStickers] = useState<Sticker[]>([]);
@@ -113,18 +126,39 @@ export function Desktop() {
     setSelectedIcon(key);
   };
 
+  const getProjectCanvasLayout = (): ProjectWindowLayout => {
+    const taskbarHeight = 40;
+    const margin = 24;
+    const availableWidth = Math.max(760, window.innerWidth - margin * 2);
+    const availableHeight = Math.max(620, window.innerHeight - taskbarHeight - margin * 2);
+    const width = Math.max(820, Math.min(1280, Math.round(availableWidth * 0.74)));
+    const height = Math.max(640, Math.min(820, Math.round(availableHeight * 0.76)));
+
+    return {
+      x: Math.max(margin, window.innerWidth - width - 24),
+      y: Math.max(18, Math.round((window.innerHeight - taskbarHeight - height) / 2)),
+      width,
+      height,
+    };
+  };
+
   const openProjectWindow = (projectId: string) => {
     setMaxZ((prev) => {
       const next = prev + 1;
       setProjectWindowZ((old) => ({ ...old, [projectId]: next }));
       return next;
     });
+    if (projectId === "p1") {
+      setProjectWindowLayout((prev) => ({ ...prev, [projectId]: getProjectCanvasLayout() }));
+      setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "rounded" }));
+    }
     setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
     setProjectWindowState((prev) => ({ ...prev, [projectId]: true }));
   };
 
   const closeProjectWindow = (projectId: string) => {
     setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
+    setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "rounded" }));
     setProjectWindowState((prev) => ({ ...prev, [projectId]: false }));
   };
 
@@ -315,16 +349,20 @@ export function Desktop() {
               title={project.title}
               isOpen={Boolean(projectWindowState[project.id])}
               zIndex={projectWindowZ[project.id] ?? 10}
-              defaultPosition={{ x: 300, y: 36 }}
-              defaultSize={{ width: 1520, height: 940 }}
-              minSize={{ width: 1320, height: 820 }}
+              defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
+              defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
+              minSize={{ width: 860, height: 680 }}
               surfaceMode={projectWindowSurface[project.id] ?? "translucent"}
+              frameMode={projectWindowFrame[project.id] ?? "rounded"}
               onClose={() => closeProjectWindow(project.id)}
               onFocus={() => focusProjectWindow(project.id)}
             >
               <DatingAlgorithmsPrototype
                 onSurfaceModeChange={(surfaceMode) =>
                   setProjectWindowSurface((prev) => ({ ...prev, [project.id]: surfaceMode }))
+                }
+                onFrameModeChange={(frameMode) =>
+                  setProjectWindowFrame((prev) => ({ ...prev, [project.id]: frameMode }))
                 }
               />
             </FloatingCanvasWindow>
