@@ -7,6 +7,7 @@ import { HomeWindow } from "@/components/HomeWindow";
 import { MyWorks, WORK_PROJECTS } from "@/components/MyWorks";
 import { RetroWindow } from "@/components/RetroWindow";
 import { Taskbar } from "@/components/Taskbar";
+import { CreateWindow } from "@/components/CreateWindow";
 import { DatingAlgorithmsPrototype } from "@/components/works/debugging-dating-algorithms/DatingAlgorithmsPrototype";
 
 type FolderKey = "work" | "create" | "life";
@@ -192,12 +193,12 @@ export function Desktop() {
 
   useEffect(() => {
     setOpenState((prev) => ({ ...prev, home: true }));
-    const targetWidth = 1104;
-    const targetHeight = 696;
     const taskbarHeight = 40;
     const margin = 24;
-    const width = Math.min(targetWidth, window.innerWidth - margin);
-    const height = Math.min(targetHeight, window.innerHeight - taskbarHeight - margin);
+    const availableWidth = Math.max(780, window.innerWidth - margin * 2);
+    const availableHeight = Math.max(520, window.innerHeight - taskbarHeight - margin * 2);
+    const width = Math.max(860, Math.min(1040, Math.round(availableWidth * 0.7)));
+    const height = Math.max(520, Math.min(640, Math.round(availableHeight * 0.68)));
     setHomeLayout({
       x: Math.max(12, (window.innerWidth - width) / 2),
       y: Math.max(12, (window.innerHeight - taskbarHeight - height) / 2),
@@ -395,11 +396,7 @@ export function Desktop() {
           onClose={() => closeWindow("create")}
           onFocus={() => focusWindow("create")}
         >
-          <ul className="list-none space-y-1 p-0">
-            <li>🎵 Music (Media Player)</li>
-            <li>🎨 Drawing (Paint UI)</li>
-            <li>🖼 Architecture (Gallery)</li>
-          </ul>
+          <CreateWindow />
         </RetroWindow>
 
         <RetroWindow
