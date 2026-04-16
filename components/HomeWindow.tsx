@@ -114,8 +114,8 @@ export function HomeWindow({
           </div>
         </section>
 
-        <section className="flex min-h-0 h-full flex-col gap-3">
-          <article className="win98-inset shrink-0 bg-white p-3">
+        <section className="grid min-h-0 h-full grid-rows-[minmax(0,1fr)_minmax(88px,0.24fr)] gap-3">
+          <article className="win98-inset min-h-0 overflow-y-auto bg-white p-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-[#6a5acd]">Profile Card</p>
             <h3 className="mt-1 text-2xl font-black tracking-wide">CHOWON</h3>
             <p className="text-sm font-bold text-[#4f4f7f]">HCI Researcher · Product Manager · Seoul</p>
@@ -144,7 +144,7 @@ export function HomeWindow({
             </div>
           </article>
 
-          <article className="win98-inset min-h-0 flex-1 overflow-y-auto bg-white p-3">
+          <article className="win98-inset min-h-0 overflow-y-auto bg-white p-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-[#6a5acd]">RPG Stats</p>
             <div className="mt-3 space-y-3">
               {stats.map((stat) => (

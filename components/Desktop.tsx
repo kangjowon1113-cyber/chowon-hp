@@ -65,6 +65,8 @@ type ProjectWindowLayout = {
 };
 
 export function Desktop() {
+  const desktopScale = 0.9;
+  const desktopScalePercent = `${(1 / desktopScale) * 100}%`;
   const [openState, setOpenState] = useState(initialOpenState);
   const [zIndex, setZIndex] = useState(initialZIndex);
   const [maxZ, setMaxZ] = useState(30);
@@ -198,7 +200,7 @@ export function Desktop() {
     const availableWidth = Math.max(780, window.innerWidth - margin * 2);
     const availableHeight = Math.max(520, window.innerHeight - taskbarHeight - margin * 2);
     const width = Math.max(860, Math.min(1040, Math.round(availableWidth * 0.7)));
-    const height = Math.max(520, Math.min(640, Math.round(availableHeight * 0.68)));
+    const height = Math.max(620, Math.min(805, Math.round(availableHeight * 0.85)));
     setHomeLayout({
       x: Math.max(12, (window.innerWidth - width) / 2),
       y: Math.max(12, (window.innerHeight - taskbarHeight - height) / 2),
@@ -250,175 +252,186 @@ export function Desktop() {
       className="desktop-grid relative h-screen w-screen overflow-hidden font-system98 text-[#111]"
       onMouseDown={handleDesktopBackgroundMouseDown}
     >
-      <section
-        className="absolute left-4 top-5 z-10 flex flex-col gap-5"
-        onMouseDown={handleDesktopBackgroundMouseDown}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translateX(-50%) scale(${desktopScale})`,
+          transformOrigin: "top center",
+          width: desktopScalePercent,
+          height: desktopScalePercent,
+          left: "50%",
+        }}
       >
-        {desktopItems.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => handleDesktopItemClick(item.key)}
-            onDoubleClick={
-              item.key === "about"
-                ? () => openWindow("home")
-                : item.key === "work"
-                  ? () => openWindow("work")
-                  : () => openWindow(item.key as FolderKey)
-            }
-            className={`active relative flex w-20 flex-col items-center gap-1 p-0.5 text-center text-sm text-black active:translate-x-px active:translate-y-px ${
-              selectedIcon === item.key
-                ? "border border-dashed border-black"
-                : "border border-transparent"
-            }`}
-          >
-            <span
-              className={`win98-outset relative flex h-11 w-11 items-center justify-center bg-[#f8f0ff] shadow-pixel ${
-                selectedIcon === item.key ? "brightness-90" : ""
+        <section
+          className="absolute left-4 top-5 z-10 flex flex-col gap-5"
+          onMouseDown={handleDesktopBackgroundMouseDown}
+        >
+          {desktopItems.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => handleDesktopItemClick(item.key)}
+              onDoubleClick={
+                item.key === "about"
+                  ? () => openWindow("home")
+                  : item.key === "work"
+                    ? () => openWindow("work")
+                    : () => openWindow(item.key as FolderKey)
+              }
+              className={`active relative flex w-20 flex-col items-center gap-1 p-0.5 text-center text-sm text-black active:translate-x-px active:translate-y-px ${
+                selectedIcon === item.key
+                  ? "border border-dashed border-black"
+                  : "border border-transparent"
               }`}
             >
-              {item.key === "about" ? (
-                <FileText size={24} strokeWidth={1.75} className="text-[#313172]" />
-              ) : (
-                <Folder size={24} strokeWidth={1.75} className="text-[#5f5f00]" />
-              )}
-              {selectedIcon === item.key ? (
-                <span className="pointer-events-none absolute inset-0 bg-[#4c6fff]/25" />
-              ) : null}
-            </span>
-            <span className="bg-white/50 px-1">{item.label}</span>
-          </button>
-        ))}
-      </section>
+              <span
+                className={`win98-outset relative flex h-11 w-11 items-center justify-center bg-[#f8f0ff] shadow-pixel ${
+                  selectedIcon === item.key ? "brightness-90" : ""
+                }`}
+              >
+                {item.key === "about" ? (
+                  <FileText size={24} strokeWidth={1.75} className="text-[#313172]" />
+                ) : (
+                  <Folder size={24} strokeWidth={1.75} className="text-[#5f5f00]" />
+                )}
+                {selectedIcon === item.key ? (
+                  <span className="pointer-events-none absolute inset-0 bg-[#4c6fff]/25" />
+                ) : null}
+              </span>
+              <span className="bg-white/50 px-1">{item.label}</span>
+            </button>
+          ))}
+        </section>
 
-      <div className="pointer-events-none absolute inset-0 z-[1]">
-        {stickers.map((sticker) => (
-          <img
-            key={sticker.id}
-            src={sticker.src}
-            alt=""
-            className="absolute select-none"
-            draggable={false}
-            style={{
-              left: `${sticker.x}px`,
-              top: `${sticker.y}px`,
-              width: `${sticker.size}px`,
-              transform: `translate(-50%, -50%) rotate(${sticker.rotation}deg)`,
-              filter: "drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.25))",
-            }}
-          />
-        ))}
+        <div className="pointer-events-none absolute inset-0 z-[1]">
+          {stickers.map((sticker) => (
+            <img
+              key={sticker.id}
+              src={sticker.src}
+              alt=""
+              className="absolute select-none"
+              draggable={false}
+              style={{
+                left: `${sticker.x}px`,
+                top: `${sticker.y}px`,
+                width: `${sticker.size}px`,
+                transform: `translate(-50%, -50%) rotate(${sticker.rotation}deg)`,
+                filter: "drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.25))",
+              }}
+            />
+          ))}
+        </div>
+
+        <div
+          className="absolute inset-0 min-h-0 pb-10"
+          onMouseDown={handleDesktopBackgroundMouseDown}
+        >
+          {homeLayout ? (
+            <HomeWindow
+              isOpen={openState.home}
+              zIndex={zIndex.home}
+              defaultPosition={{ x: homeLayout.x, y: homeLayout.y }}
+              defaultSize={{ width: homeLayout.width, height: homeLayout.height }}
+              minSize={{
+                width: Math.max(320, Math.min(480, homeLayout.width)),
+                height: Math.max(240, Math.min(340, homeLayout.height)),
+              }}
+              onClose={() => closeWindow("home")}
+              onFocus={() => focusWindow("home")}
+            />
+          ) : null}
+
+          <RetroWindow
+            title="My Works"
+            isOpen={openState.work}
+            zIndex={zIndex.work}
+            gradientColors={["#FF1493", "#FF69B4"]}
+            defaultPosition={{ x: 160, y: 80 }}
+            defaultSize={{ width: 740, height: 520 }}
+            minSize={{ width: 460, height: 300 }}
+            onClose={() => closeWindow("work")}
+            onFocus={() => focusWindow("work")}
+          >
+            <MyWorks onOpenProject={openProjectWindow} />
+          </RetroWindow>
+
+          {WORK_PROJECTS.map((project, index) =>
+            project.id === "p1" ? (
+              <FloatingCanvasWindow
+                key={project.id}
+                title={project.title}
+                isOpen={Boolean(projectWindowState[project.id])}
+                zIndex={projectWindowZ[project.id] ?? 10}
+                defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
+                defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
+                minSize={{ width: 860, height: 680 }}
+                surfaceMode={projectWindowSurface[project.id] ?? "translucent"}
+                frameMode={projectWindowFrame[project.id] ?? "rounded"}
+                onClose={() => closeProjectWindow(project.id)}
+                onFocus={() => focusProjectWindow(project.id)}
+              >
+                <DatingAlgorithmsPrototype
+                  onSurfaceModeChange={(surfaceMode) =>
+                    setProjectWindowSurface((prev) => ({ ...prev, [project.id]: surfaceMode }))
+                  }
+                  onFrameModeChange={(frameMode) =>
+                    setProjectWindowFrame((prev) => ({ ...prev, [project.id]: frameMode }))
+                  }
+                />
+              </FloatingCanvasWindow>
+            ) : (
+              <RetroWindow
+                key={project.id}
+                title={project.title}
+                isOpen={Boolean(projectWindowState[project.id])}
+                zIndex={projectWindowZ[project.id] ?? 10}
+                gradientColors={["#FF1493", "#FF69B4"]}
+                defaultPosition={{ x: 220 + index * 26, y: 110 + index * 24 }}
+                defaultSize={{ width: 806, height: 529 }}
+                minSize={{ width: 529, height: 328 }}
+                onClose={() => closeProjectWindow(project.id)}
+                onFocus={() => focusProjectWindow(project.id)}
+              >
+                <div className="h-full w-full bg-white" />
+              </RetroWindow>
+            ),
+          )}
+
+          <RetroWindow
+            title="Create"
+            isOpen={openState.create}
+            zIndex={zIndex.create}
+            gradientColors={["#FF8C00", "#FFD700"]}
+            defaultPosition={{ x: 290, y: 180 }}
+          defaultSize={{ width: 780, height: 520 }}
+          minSize={{ width: 420, height: 300 }}
+            onClose={() => closeWindow("create")}
+            onFocus={() => focusWindow("create")}
+          >
+            <CreateWindow />
+          </RetroWindow>
+
+          <RetroWindow
+            title="Life"
+            isOpen={openState.life}
+            zIndex={zIndex.life}
+            gradientColors={["#87CEEB", "#98FF98"]}
+            defaultPosition={{ x: 460, y: 120 }}
+            defaultSize={{ width: 600, height: 400 }}
+            minSize={{ width: 280, height: 240 }}
+            onClose={() => closeWindow("life")}
+            onFocus={() => focusWindow("life")}
+          >
+            <ul className="list-none space-y-1 p-0">
+              <li>📝 Cooking</li>
+              <li>📝 Travel</li>
+              <li>📝 Diary</li>
+            </ul>
+          </RetroWindow>
+        </div>
+
+        <Taskbar />
       </div>
-
-      <div
-        className="absolute inset-0 min-h-0 pb-10"
-        onMouseDown={handleDesktopBackgroundMouseDown}
-      >
-        {homeLayout ? (
-          <HomeWindow
-            isOpen={openState.home}
-            zIndex={zIndex.home}
-            defaultPosition={{ x: homeLayout.x, y: homeLayout.y }}
-            defaultSize={{ width: homeLayout.width, height: homeLayout.height }}
-            minSize={{
-              width: Math.max(320, Math.min(480, homeLayout.width)),
-              height: Math.max(240, Math.min(340, homeLayout.height)),
-            }}
-            onClose={() => closeWindow("home")}
-            onFocus={() => focusWindow("home")}
-          />
-        ) : null}
-
-        <RetroWindow
-          title="My Works"
-          isOpen={openState.work}
-          zIndex={zIndex.work}
-          gradientColors={["#FF1493", "#FF69B4"]}
-          defaultPosition={{ x: 160, y: 80 }}
-          defaultSize={{ width: 740, height: 520 }}
-          minSize={{ width: 460, height: 300 }}
-          onClose={() => closeWindow("work")}
-          onFocus={() => focusWindow("work")}
-        >
-          <MyWorks onOpenProject={openProjectWindow} />
-        </RetroWindow>
-
-        {WORK_PROJECTS.map((project, index) =>
-          project.id === "p1" ? (
-            <FloatingCanvasWindow
-              key={project.id}
-              title={project.title}
-              isOpen={Boolean(projectWindowState[project.id])}
-              zIndex={projectWindowZ[project.id] ?? 10}
-              defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
-              defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
-              minSize={{ width: 860, height: 680 }}
-              surfaceMode={projectWindowSurface[project.id] ?? "translucent"}
-              frameMode={projectWindowFrame[project.id] ?? "rounded"}
-              onClose={() => closeProjectWindow(project.id)}
-              onFocus={() => focusProjectWindow(project.id)}
-            >
-              <DatingAlgorithmsPrototype
-                onSurfaceModeChange={(surfaceMode) =>
-                  setProjectWindowSurface((prev) => ({ ...prev, [project.id]: surfaceMode }))
-                }
-                onFrameModeChange={(frameMode) =>
-                  setProjectWindowFrame((prev) => ({ ...prev, [project.id]: frameMode }))
-                }
-              />
-            </FloatingCanvasWindow>
-          ) : (
-            <RetroWindow
-              key={project.id}
-              title={project.title}
-              isOpen={Boolean(projectWindowState[project.id])}
-              zIndex={projectWindowZ[project.id] ?? 10}
-              gradientColors={["#FF1493", "#FF69B4"]}
-              defaultPosition={{ x: 220 + index * 26, y: 110 + index * 24 }}
-              defaultSize={{ width: 806, height: 529 }}
-              minSize={{ width: 529, height: 328 }}
-              onClose={() => closeProjectWindow(project.id)}
-              onFocus={() => focusProjectWindow(project.id)}
-            >
-              <div className="h-full w-full bg-white" />
-            </RetroWindow>
-          ),
-        )}
-
-        <RetroWindow
-          title="Create"
-          isOpen={openState.create}
-          zIndex={zIndex.create}
-          gradientColors={["#FF8C00", "#FFD700"]}
-          defaultPosition={{ x: 290, y: 180 }}
-          defaultSize={{ width: 600, height: 400 }}
-          minSize={{ width: 280, height: 240 }}
-          onClose={() => closeWindow("create")}
-          onFocus={() => focusWindow("create")}
-        >
-          <CreateWindow />
-        </RetroWindow>
-
-        <RetroWindow
-          title="Life"
-          isOpen={openState.life}
-          zIndex={zIndex.life}
-          gradientColors={["#87CEEB", "#98FF98"]}
-          defaultPosition={{ x: 460, y: 120 }}
-          defaultSize={{ width: 600, height: 400 }}
-          minSize={{ width: 280, height: 240 }}
-          onClose={() => closeWindow("life")}
-          onFocus={() => focusWindow("life")}
-        >
-          <ul className="list-none space-y-1 p-0">
-            <li>📝 Cooking</li>
-            <li>📝 Travel</li>
-            <li>📝 Diary</li>
-          </ul>
-        </RetroWindow>
-      </div>
-
-      <Taskbar />
     </main>
   );
 }
