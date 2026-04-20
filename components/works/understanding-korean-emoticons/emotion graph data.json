@@ -1,0 +1,31 @@
+[
+    { "context": "Happy", "label": "ㅋ8", "count": 8, "x": 0.8, "y": 0.8, "meanings": ["loud laughter", "very funny"], "emojis": ["🤣", "😂"] },
+    { "context": "Happy", "label": "ㅎ8", "count": 8, "x": 0.65, "y": 0.75, "meanings": ["happy laughter"], "emojis": ["😊", "😊"] },
+    { "context": "Happy", "label": "ㅠ8", "count": 8, "x": 0.55, "y": 0.7, "meanings": ["playful or very sad"], "emojis": ["😭"] },
+    { "context": "Happy", "label": "ㅎ2", "count": 2, "x": 0.5, "y": 0.45, "meanings": ["a nice smile", "polite smile"], "emojis": ["🙂", "😊"] },
+    { "context": "Happy", "label": "ㅋ2", "count": 2, "x": 0.55, "y": 0.35, "meanings": ["habitual", "grinning"], "emojis": ["😁"] },
+    { "context": "Happy", "label": "ㅠ2", "count": 2, "x": 0.6, "y": 0.3, "meanings": ["sad a bit"], "emojis": ["🥹"] },
+    { "context": "Happy", "label": "ㅋ1", "count": 1, "x": 0.2, "y": 0.1, "meanings": ["sarcastic", "aggressive"], "emojis": ["😒", "🤭"] },
+  
+    { "context": "Neutral", "label": "ㅎ8", "count": 8, "x": 0.55, "y": 0.75, "meanings": ["happy laughter"], "emojis": ["😊", "😊"] },
+    { "context": "Neutral", "label": "ㅋ8", "count": 8, "x": 0.5, "y": 0.65, "meanings": ["loud laughter", "very funny"], "emojis": ["🤣", "😂"] },
+    { "context": "Neutral", "label": "ㅎ2", "count": 2, "x": 0.4, "y": 0.25, "meanings": ["a nice smile", "polite smile"], "emojis": ["🙂", "😊"] },
+    { "context": "Neutral", "label": "ㅋ2", "count": 2, "x": 0.3, "y": 0.2, "meanings": ["habitual", "grinning"], "emojis": ["😁"] },
+    { "context": "Neutral", "label": "ㅎ1", "count": 1, "x": 0.1, "y": 0.1, "meanings": ["sneering", "smirking"], "emojis": ["😏", "😌"] },
+    { "context": "Neutral", "label": "ㅋ1", "count": 1, "x": 0.05, "y": 0.05, "meanings": ["sarcastic", "aggressive"], "emojis": ["😒", "🤭"] },
+    { "context": "Neutral", "label": "ㅠ1", "count": 1, "x": -0.1, "y": -0.1, "meanings": ["sad a bit"], "emojis": ["🥹"] },
+    { "context": "Neutral", "label": "ㅠ2", "count": 2, "x": -0.2, "y": -0.4, "meanings": ["sad a bit"], "emojis": ["🥹"] },
+    { "context": "Neutral", "label": "ㅠ8", "count": 8, "x": -0.3, "y": -0.55, "meanings": ["playful or very sad"], "emojis": ["😭"] },
+  
+    { "context": "Sad", "label": "ㅋ8", "count": 8, "x": 0.1, "y": 0.4, "meanings": ["loud laughter", "very funny"], "emojis": ["🤣", "😂"] },
+    { "context": "Sad", "label": "ㅎ8", "count": 8, "x": 0.0, "y": 0.3, "meanings": ["happy laughter"], "emojis": ["😊", "😊"] },
+    { "context": "Sad", "label": "ㅠ8", "count": 8, "x": 0.0, "y": 0.15, "meanings": ["playful or very sad"], "emojis": ["😭"] },
+    { "context": "Sad", "label": "ㅋ2", "count": 2, "x": -0.05, "y": 0.15, "meanings": ["habitual", "grinning"], "emojis": ["😁"] },
+    { "context": "Sad", "label": "ㅎ2", "count": 2, "x": -0.05, "y": 0.05, "meanings": ["a nice smile", "polite smile"], "emojis": ["🙂", "😊"] },
+    { "context": "Sad", "label": "ㅠ2", "count": 2, "x": -0.15, "y": -0.05, "meanings": ["sad a bit"], "emojis": ["🥹"] },
+    { "context": "Sad", "label": "ㅋ1", "count": 1, "x": -0.1, "y": -0.15, "meanings": ["sarcastic", "aggressive"], "emojis": ["😒", "🤭"] },
+    { "context": "Sad", "label": "ㅎ1", "count": 1, "x": -0.15, "y": -0.25, "meanings": ["sneering", "smirking"], "emojis": ["😏", "😌"] },
+    { "context": "Sad", "label": "ㅠ1", "count": 1, "x": -0.3, "y": -0.45, "meanings": ["sad a bit"], "emojis": ["🥹"] },
+    { "context": "Sad", "label": "ㅠ2", "count": 2, "x": -0.5, "y": -0.65, "meanings": ["sad a bit"], "emojis": ["🥹"] },
+    { "context": "Sad", "label": "ㅠ8", "count": 8, "x": -0.75, "y": -0.75, "meanings": ["playful or very sad"], "emojis": ["😭"] }
+  ]

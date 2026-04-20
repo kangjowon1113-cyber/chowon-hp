@@ -9,6 +9,7 @@ import { RetroWindow } from "@/components/RetroWindow";
 import { Taskbar } from "@/components/Taskbar";
 import { CreateWindow } from "@/components/CreateWindow";
 import { DatingAlgorithmsPrototype } from "@/components/works/debugging-dating-algorithms/DatingAlgorithmsPrototype";
+import { EmotionGraph } from "@/components/works/understanding-korean-emoticons/EmotionGraph";
 
 type FolderKey = "work" | "create" | "life";
 type IconKey = "about" | FolderKey;
@@ -151,7 +152,7 @@ export function Desktop() {
       setProjectWindowZ((old) => ({ ...old, [projectId]: next }));
       return next;
     });
-    if (projectId === "p1") {
+    if (projectId === "p1" || projectId === "p3") {
       setProjectWindowLayout((prev) => ({ ...prev, [projectId]: getProjectCanvasLayout() }));
       setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "rounded" }));
     }
@@ -176,12 +177,13 @@ export function Desktop() {
   const placeRandomSticker = (event: MouseEvent<HTMLElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const baseSize = 44 + Math.floor(Math.random() * 26);
-    const rawX = event.clientX - rect.left;
-    const rawY = event.clientY - rect.top;
+    // Divide by desktopScale to convert from screen coordinates to the scaled div's local coordinate space
+    const rawX = (event.clientX - rect.left) / desktopScale;
+    const rawY = (event.clientY - rect.top) / desktopScale;
     const src = stickerImages[Math.floor(Math.random() * stickerImages.length)];
     const size = getStickerSize(src, baseSize);
-    const x = Math.min(rect.width - size / 2, Math.max(size / 2, rawX));
-    const y = Math.min(rect.height - size / 2, Math.max(size / 2, rawY));
+    const x = Math.min(rect.width / desktopScale - size / 2, Math.max(size / 2, rawX));
+    const y = Math.min(rect.height / desktopScale - size / 2, Math.max(size / 2, rawY));
 
     setStickers((prev) => [...prev, createSticker(src, x, y, size)]);
   };
@@ -378,6 +380,22 @@ export function Desktop() {
                     setProjectWindowFrame((prev) => ({ ...prev, [project.id]: frameMode }))
                   }
                 />
+              </FloatingCanvasWindow>
+            ) : project.id === "p3" ? (
+              <FloatingCanvasWindow
+                key={project.id}
+                title={project.title}
+                isOpen={Boolean(projectWindowState[project.id])}
+                zIndex={projectWindowZ[project.id] ?? 10}
+                defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
+                defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
+                minSize={{ width: 860, height: 680 }}
+                surfaceMode={projectWindowSurface[project.id] ?? "translucent"}
+                frameMode={projectWindowFrame[project.id] ?? "rounded"}
+                onClose={() => closeProjectWindow(project.id)}
+                onFocus={() => focusProjectWindow(project.id)}
+              >
+                <EmotionGraph />
               </FloatingCanvasWindow>
             ) : (
               <RetroWindow

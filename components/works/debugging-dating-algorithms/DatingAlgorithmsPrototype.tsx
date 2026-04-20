@@ -292,16 +292,19 @@ export function DatingAlgorithmsPrototype({
                       type="button"
                       aria-label={option.label}
                       onClick={() => setPendingLikeProfileId(option.id)}
-                      className="min-w-0 overflow-hidden rounded-[30px] border-[6px] border-[#dad3d9] bg-white/90 p-[7px] shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition hover:border-[#ffb1c8]"
+                      className="flex min-w-0 flex-col items-center gap-2 rounded-[30px] border-[6px] border-[#dad3d9] bg-white/90 p-[7px] shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition hover:border-[#ffb1c8]"
                     >
-                      <div className="overflow-hidden rounded-[22px] bg-white">
+                      <div className="w-full overflow-hidden rounded-[22px] bg-white">
                         <img
                           src={option.src}
                           alt={option.label}
-                          className="aspect-[375/814] w-full scale-110 object-cover object-top"
+                          className="aspect-[375/814] w-full object-cover object-top"
                           draggable={false}
                         />
                       </div>
+                      <span className="pb-1 text-center text-[11px] font-bold text-[#4b4550]">
+                        {option.label}
+                      </span>
                     </button>
                   ))}
                 </div>
