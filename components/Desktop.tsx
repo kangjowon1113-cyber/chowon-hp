@@ -2,6 +2,7 @@
 
 import { FileText, Folder } from "lucide-react";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { EmailComposeWindow } from "@/components/EmailComposeWindow";
 import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
 import { HomeWindow } from "@/components/HomeWindow";
 import { MyWorks, WORK_PROJECTS } from "@/components/MyWorks";
@@ -9,7 +10,8 @@ import { RetroWindow } from "@/components/RetroWindow";
 import { Taskbar } from "@/components/Taskbar";
 import { CreateWindow } from "@/components/CreateWindow";
 import { DatingAlgorithmsPrototype } from "@/components/works/debugging-dating-algorithms/DatingAlgorithmsPrototype";
-import { EmotionGraph } from "@/components/works/understanding-korean-emoticons/EmotionGraph";
+import { AIModeratorsContent } from "@/components/works/ai-moderators/AIModeratorsContent";
+import { KoreanEmoticonsContent } from "@/components/works/understanding-korean-emoticons/KoreanEmoticonsContent";
 
 type FolderKey = "work" | "create" | "life";
 type IconKey = "about" | FolderKey;
@@ -91,6 +93,7 @@ export function Desktop() {
   );
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const hasSeededInitialStickers = useRef(false);
+  const [emailOpen, setEmailOpen] = useState(false);
 
   const getStickerSize = (src: string, baseSize: number) => {
     return src === "/stickers/Group 2.png" ? Math.max(14, Math.round(baseSize / 3)) : baseSize;
@@ -152,11 +155,18 @@ export function Desktop() {
       setProjectWindowZ((old) => ({ ...old, [projectId]: next }));
       return next;
     });
-    if (projectId === "p1" || projectId === "p3") {
+    if (projectId === "p1" || projectId === "p2" || projectId === "p3") {
       setProjectWindowLayout((prev) => ({ ...prev, [projectId]: getProjectCanvasLayout() }));
-      setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "rounded" }));
+      if (projectId === "p1") {
+        setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "rounded" }));
+        setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
+      } else {
+        setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "window" }));
+        setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "solid" }));
+      }
+    } else {
+      setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
     }
-    setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
     setProjectWindowState((prev) => ({ ...prev, [projectId]: true }));
   };
 
@@ -204,8 +214,8 @@ export function Desktop() {
     const width = Math.max(860, Math.min(1040, Math.round(availableWidth * 0.7)));
     const height = Math.max(620, Math.min(805, Math.round(availableHeight * 0.85)));
     setHomeLayout({
-      x: Math.max(12, (window.innerWidth - width) / 2),
-      y: Math.max(12, (window.innerHeight - taskbarHeight - height) / 2),
+      x: Math.max(12, (window.innerWidth / desktopScale - width) / 2),
+      y: Math.max(12, ((window.innerHeight - taskbarHeight) / desktopScale - height) / 2),
       width,
       height,
     });
@@ -254,6 +264,11 @@ export function Desktop() {
       className="desktop-grid relative h-screen w-screen overflow-hidden font-system98 text-[#111]"
       onMouseDown={handleDesktopBackgroundMouseDown}
     >
+      <EmailComposeWindow
+        isOpen={emailOpen}
+        zIndex={9999}
+        onClose={() => setEmailOpen(false)}
+      />
       <div
         className="absolute inset-0"
         style={{
@@ -381,6 +396,22 @@ export function Desktop() {
                   }
                 />
               </FloatingCanvasWindow>
+            ) : project.id === "p2" ? (
+              <FloatingCanvasWindow
+                key={project.id}
+                title={project.title}
+                isOpen={Boolean(projectWindowState[project.id])}
+                zIndex={projectWindowZ[project.id] ?? 10}
+                defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
+                defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
+                minSize={{ width: 860, height: 680 }}
+                surfaceMode={projectWindowSurface[project.id] ?? "solid"}
+                frameMode={projectWindowFrame[project.id] ?? "window"}
+                onClose={() => closeProjectWindow(project.id)}
+                onFocus={() => focusProjectWindow(project.id)}
+              >
+                <AIModeratorsContent />
+              </FloatingCanvasWindow>
             ) : project.id === "p3" ? (
               <FloatingCanvasWindow
                 key={project.id}
@@ -390,12 +421,12 @@ export function Desktop() {
                 defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
                 defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
                 minSize={{ width: 860, height: 680 }}
-                surfaceMode={projectWindowSurface[project.id] ?? "translucent"}
-                frameMode={projectWindowFrame[project.id] ?? "rounded"}
+                surfaceMode={projectWindowSurface[project.id] ?? "solid"}
+                frameMode={projectWindowFrame[project.id] ?? "window"}
                 onClose={() => closeProjectWindow(project.id)}
                 onFocus={() => focusProjectWindow(project.id)}
               >
-                <EmotionGraph />
+                <KoreanEmoticonsContent />
               </FloatingCanvasWindow>
             ) : (
               <RetroWindow
@@ -448,7 +479,7 @@ export function Desktop() {
           </RetroWindow>
         </div>
 
-        <Taskbar />
+        <Taskbar onEmailClick={() => setEmailOpen(true)} />
       </div>
     </main>
   );

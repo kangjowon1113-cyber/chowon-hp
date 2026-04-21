@@ -10,7 +10,11 @@ function formatTime(date: Date) {
   });
 }
 
-export function Taskbar() {
+type TaskbarProps = {
+  onEmailClick: () => void;
+};
+
+export function Taskbar({ onEmailClick }: TaskbarProps) {
   const [time, setTime] = useState(() => formatTime(new Date()));
 
   useEffect(() => {
@@ -24,15 +28,33 @@ export function Taskbar() {
   return (
     <div className="win98-outset absolute bottom-0 left-0 right-0 z-50 h-10 bg-winGrey px-2">
       <div className="flex h-full items-center justify-between">
-        <button
-          type="button"
-          className="win98-outset bg-winGrey px-3 py-1 text-sm font-bold"
-        >
-          Start
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={onEmailClick}
+            className="win98-outset bg-winGrey px-3 py-1 text-sm font-bold active:translate-x-px active:translate-y-px"
+          >
+            📧 Email
+          </button>
+          <a
+            href="https://www.linkedin.com/in/chowonkang"
+            target="_blank"
+            rel="noreferrer"
+            className="win98-outset block bg-winGrey px-3 py-1 text-sm font-bold no-underline active:translate-x-px active:translate-y-px"
+          >
+            💼 LinkedIn
+          </a>
+          <a
+            href="/cv.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="win98-outset block bg-winGrey px-3 py-1 text-sm font-bold no-underline active:translate-x-px active:translate-y-px"
+          >
+            📄 CV
+          </a>
+        </div>
         <div className="win98-inset min-w-24 px-2 py-1 text-right text-sm">{time}</div>
       </div>
     </div>
   );
 }
-

@@ -14,6 +14,8 @@ type DataPoint = {
   emojis: string[];
 };
 
+export type { DataPoint };
+
 const CONTEXT_COLORS: Record<string, string> = {
   Happy: "#e8303a",
   Neutral: "#27ae60",
@@ -34,8 +36,26 @@ function expandLabel(label: string, count: number): string {
   return match[1].repeat(Math.max(1, count));
 }
 
-export function EmotionGraph() {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+type EmotionGraphProps = {
+  hoveredIndex?: number | null;
+  onHoverChange?: (index: number | null) => void;
+};
+
+export function EmotionGraph({ hoveredIndex: externalHovered, onHoverChange }: EmotionGraphProps = {}) {
+  const [internalHovered, setInternalHovered] = useState<number | null>(null);
+
+  const isControlled = externalHovered !== undefined;
+  const hoveredIndex = isControlled ? externalHovered : internalHovered;
+
+  const handleHoverStart = (i: number) => {
+    if (!isControlled) setInternalHovered(i);
+    onHoverChange?.(i);
+  };
+
+  const handleHoverEnd = () => {
+    if (!isControlled) setInternalHovered(null);
+    onHoverChange?.(null);
+  };
 
   const data = emotionData as DataPoint[];
 
@@ -62,15 +82,10 @@ export function EmotionGraph() {
   const originY = padTop + ((dataMax - 0) / dataRange) * plotH;
 
   const tickValues = [-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8];
-
-  const hoveredPt = hoveredIndex !== null ? data[hoveredIndex] : null;
+  const hoveredPt = hoveredIndex !== null && hoveredIndex !== undefined ? data[hoveredIndex] : null;
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-white p-4 font-system98">
-      <h2 className="text-xs font-bold uppercase tracking-widest text-[#6c6377]">
-        Emotion Space of Korean Emoticons
-      </h2>
-
       <div className="relative w-full flex-1 min-h-0 flex items-center justify-center">
         <svg
           width="100%"
@@ -96,8 +111,10 @@ export function EmotionGraph() {
           <line x1={originX} y1={padTop} x2={originX} y2={padTop + plotH} stroke="#bbb" strokeWidth={1.5} />
 
           {/* Axis labels */}
-          <text x={padLeft + plotW + 8} y={originY + 5} fontSize={16} fill="#aaa" fontFamily={FONT}>→ Valence</text>
-          <text x={originX - 6} y={padTop - 12} fontSize={16} fill="#aaa" fontFamily={FONT} textAnchor="middle">↑ Arousal</text>
+          <text x={padLeft + plotW + 8} y={originY + 5} fontSize={14} fill="#aaa" fontFamily={FONT}>Pleasure →</text>
+          <text x={padLeft - 8} y={originY + 5} fontSize={14} fill="#aaa" fontFamily={FONT} textAnchor="end">← Displeasure</text>
+          <text x={originX} y={padTop - 14} fontSize={14} fill="#aaa" fontFamily={FONT} textAnchor="middle">↑ Arousal</text>
+          <text x={originX} y={padTop + plotH + 24} fontSize={14} fill="#aaa" fontFamily={FONT} textAnchor="middle">Sleepiness ↓</text>
 
           {/* Tick labels */}
           {[-0.5, 0, 0.5].map((v) => {
@@ -130,14 +147,14 @@ export function EmotionGraph() {
             const { sx, sy } = toSvg(pt.x, pt.y);
             const color = CONTEXT_COLORS[pt.context] ?? "#888";
             const isHovered = hoveredIndex === i;
-            const isDimmed = hoveredIndex !== null && !isHovered;
+            const isDimmed = hoveredIndex !== null && hoveredIndex !== undefined && !isHovered;
 
             return (
               <motion.g
                 key={`${pt.context}-${pt.label}-${i}`}
-                style={{ cursor: "default", transformOrigin: `${sx}px ${sy}px` }}
-                onHoverStart={() => setHoveredIndex(i)}
-                onHoverEnd={() => setHoveredIndex(null)}
+                style={{ cursor: "pointer", transformOrigin: `${sx}px ${sy}px` }}
+                onHoverStart={() => handleHoverStart(i)}
+                onHoverEnd={handleHoverEnd}
                 animate={{
                   opacity: isDimmed ? 0.18 : 1,
                   scale: isHovered ? 2.4 : 1,
@@ -152,7 +169,6 @@ export function EmotionGraph() {
                   stroke={color}
                   strokeWidth={isHovered ? 2 : 1.5}
                 />
-                {/* Default tiny label */}
                 {!isHovered && (
                   <text
                     x={sx + 10}
@@ -170,8 +186,8 @@ export function EmotionGraph() {
             );
           })}
 
-          {/* Hover tooltip — rendered outside motion.g so it doesn't scale */}
-          {hoveredPt !== null && hoveredIndex !== null && (() => {
+          {/* Hover tooltip */}
+          {hoveredPt !== null && hoveredPt !== undefined && hoveredIndex !== null && hoveredIndex !== undefined && (() => {
             const { sx, sy } = toSvg(hoveredPt.x, hoveredPt.y);
             const color = CONTEXT_COLORS[hoveredPt.context] ?? "#888";
             const expanded = expandLabel(hoveredPt.label, hoveredPt.count);

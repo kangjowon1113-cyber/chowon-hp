@@ -18,14 +18,14 @@ export const WORK_PROJECTS: ProjectItem[] = [
   },
   {
     id: "p2",
-    title: "AI Moderators: Integating Quantitative and Qualitative Research",
+    title: "AI Moderators: Blurring the Boundaries of Qualitative and Quantitative Research",
     type: "Current Business",
     status: "In Progress",
     summary: "AI moderators are the new interviewers for the future...",
   },
   {
     id: "p3",
-    title: "Understanding Korean Emoticons: ㅋ, ㅎ, ㅠ",
+    title: "Korean Emoticons: Understanding How Subtle Emotional Differences Are Evoked Online",
     type: "HCI RESEARCH",
     status: "PUBLISHED(1st Author)",
     summary: "Online conversations through text have limitations in expressing emotions that...",
