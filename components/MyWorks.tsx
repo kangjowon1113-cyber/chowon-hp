@@ -59,7 +59,7 @@ export function MyWorks({ onOpenProject }: MyWorksProps) {
           <button
             key={project.id}
             type="button"
-            onDoubleClick={() => onOpenProject(project.id)}
+            onClick={() => onOpenProject(project.id)}
             className="win98-outset mb-2 block w-full border border-[#777] bg-white p-2 text-left last:mb-0 active:translate-x-px active:translate-y-px"
             style={{ borderColor: "#c6c6c6 #777 #777 #c6c6c6" }}
           >

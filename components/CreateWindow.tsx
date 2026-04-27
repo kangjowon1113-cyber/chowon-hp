@@ -108,8 +108,7 @@ export function CreateWindow() {
           <button
             key={folder.id}
             type="button"
-            onClick={() => handleFolderClick(folder.id)}
-            onDoubleClick={() => handleFolderDoubleClick(folder.id)}
+            onClick={() => handleFolderDoubleClick(folder.id)}
             className={`flex flex-col items-center gap-1.5 rounded-[2px] p-1.5 text-center focus:outline-none ${
               selectedFolder === folder.id ? "border border-dashed border-black bg-[#c0c0ff]/30" : "border border-transparent"
             }`}

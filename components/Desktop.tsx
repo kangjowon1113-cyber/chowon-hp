@@ -287,14 +287,12 @@ export function Desktop() {
             <button
               key={item.key}
               type="button"
-              onClick={() => handleDesktopItemClick(item.key)}
-              onDoubleClick={
-                item.key === "about"
-                  ? () => openWindow("home")
-                  : item.key === "work"
-                    ? () => openWindow("work")
-                    : () => openWindow(item.key as FolderKey)
-              }
+              onClick={() => {
+                handleDesktopItemClick(item.key);
+                if (item.key === "about") openWindow("home");
+                else if (item.key === "work") openWindow("work");
+                else openWindow(item.key as FolderKey);
+              }}
               className={`active relative flex w-20 flex-col items-center gap-1 p-0.5 text-center text-sm text-black active:translate-x-px active:translate-y-px ${
                 selectedIcon === item.key
                   ? "border border-dashed border-black"
