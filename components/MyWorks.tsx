@@ -18,7 +18,7 @@ export const WORK_PROJECTS: ProjectItem[] = [
   },
   {
     id: "p2",
-    title: "AI Moderators: Blurring the Boundaries of Qualitative and Quantitative Research",
+    title: "AI moderators: Redefining Research through Large-Scale Qualitative AI Moderation",
     type: "Current Business",
     status: "In Progress",
     summary: "AI moderators are the new interviewers for the future...",

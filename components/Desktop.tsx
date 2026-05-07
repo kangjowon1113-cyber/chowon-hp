@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Folder } from "lucide-react";
+import { FileText, Folder, Music, Palette } from "lucide-react";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { EmailComposeWindow } from "@/components/EmailComposeWindow";
 import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
@@ -20,8 +20,8 @@ type WindowKey = "home" | FolderKey;
 const desktopItems: Array<{ key: IconKey; label: string }> = [
   { key: "about", label: "About Me" },
   { key: "work", label: "Work" },
-  { key: "create", label: "Create" },
-  { key: "life", label: "Life" },
+  { key: "create", label: "Music" },
+  { key: "life", label: "Artworks" },
 ];
 
 const initialZIndex: Record<WindowKey, number> = {
@@ -306,6 +306,10 @@ export function Desktop() {
               >
                 {item.key === "about" ? (
                   <FileText size={24} strokeWidth={1.75} className="text-[#313172]" />
+                ) : item.key === "create" ? (
+                  <Music size={24} strokeWidth={1.75} className="text-[#c4006e]" />
+                ) : item.key === "life" ? (
+                  <Palette size={24} strokeWidth={1.75} className="text-[#7b3fa0]" />
                 ) : (
                   <Folder size={24} strokeWidth={1.75} className="text-[#5f5f00]" />
                 )}
@@ -445,13 +449,15 @@ export function Desktop() {
           )}
 
           <RetroWindow
-            title="Create"
+            title="Music"
             isOpen={openState.create}
             zIndex={zIndex.create}
             gradientColors={["#FF8C00", "#FFD700"]}
             defaultPosition={{ x: 290, y: 180 }}
-          defaultSize={{ width: 780, height: 520 }}
-          minSize={{ width: 420, height: 300 }}
+            defaultSize={{ width: 780, height: 520 }}
+            minSize={{ width: 420, height: 300 }}
+            noPadding
+            rounded
             onClose={() => closeWindow("create")}
             onFocus={() => focusWindow("create")}
           >
@@ -459,7 +465,7 @@ export function Desktop() {
           </RetroWindow>
 
           <RetroWindow
-            title="Life"
+            title="Artworks"
             isOpen={openState.life}
             zIndex={zIndex.life}
             gradientColors={["#87CEEB", "#98FF98"]}

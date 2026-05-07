@@ -11,6 +11,8 @@ type RetroWindowProps = {
   defaultPosition: { x: number; y: number };
   defaultSize: { width: number; height: number };
   minSize?: { width: number; height: number };
+  noPadding?: boolean;
+  rounded?: boolean;
   onClose: () => void;
   onFocus: () => void;
   children?: ReactNode;
@@ -24,6 +26,8 @@ export function RetroWindow({
   defaultPosition,
   defaultSize,
   minSize = { width: 420, height: 280 },
+  noPadding = false,
+  rounded = false,
   onClose,
   onFocus,
   children,
@@ -84,11 +88,11 @@ export function RetroWindow({
       }}
     >
       <section
-        className="win98-outset flex h-full min-h-0 w-full flex-col bg-winGrey shadow-[6px_6px_0_#5a5a5a]"
+        className={`win98-outset flex h-full min-h-0 w-full flex-col bg-winGrey shadow-[6px_6px_0_#5a5a5a] ${rounded ? "overflow-hidden rounded-xl" : ""}`}
         onMouseDown={onFocus}
       >
         <header
-          className="retro-window-handle flex cursor-move items-center justify-between px-3 py-2"
+          className={`retro-window-handle flex cursor-move items-center justify-between px-3 py-2 ${rounded ? "rounded-t-xl" : ""}`}
           style={{
             backgroundImage: `linear-gradient(90deg, ${gradientColors[0]}, ${gradientColors[1]})`,
           }}
@@ -114,11 +118,17 @@ export function RetroWindow({
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 p-3">
-          <div className="win98-inset h-full min-h-0 overflow-y-auto bg-white p-3 text-sm leading-6">
+        {noPadding ? (
+          <div className="min-h-0 flex-1 overflow-hidden">
             {children}
           </div>
-        </div>
+        ) : (
+          <div className="min-h-0 flex-1 p-3">
+            <div className="win98-inset h-full min-h-0 overflow-y-auto bg-white p-3 text-sm leading-6">
+              {children}
+            </div>
+          </div>
+        )}
       </section>
     </Rnd>
   );
