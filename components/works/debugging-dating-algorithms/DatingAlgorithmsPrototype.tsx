@@ -51,11 +51,13 @@ function getMatchStatus(
 type DatingAlgorithmsPrototypeProps = {
   onSurfaceModeChange?: (surfaceMode: "translucent" | "solid") => void;
   onFrameModeChange?: (frameMode: "rounded" | "window") => void;
+  onBack?: () => void;
 };
 
 export function DatingAlgorithmsPrototype({
   onSurfaceModeChange,
   onFrameModeChange,
+  onBack,
 }: DatingAlgorithmsPrototypeProps) {
   const [screen, setScreen] = useState<"home" | "candidate" | "compare" | "legacy">("home");
   const [activeMatchId, setActiveMatchId] = useState<(typeof matchProfiles)[number]["id"]>("cha-eunwoo");
@@ -63,11 +65,13 @@ export function DatingAlgorithmsPrototype({
   const [chaEunwooChoice, setChaEunwooChoice] = useState<ProfileOptionId | null>(null);
   const [byeonWooseokChoice, setByeonWooseokChoice] = useState<ProfileOptionId | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [compareTabId, setCompareTabId] = useState<ProfileOptionId>("iu-1");
   const bellRef = useRef<HTMLDivElement>(null);
 
   const activeMatch = matchProfiles.find((p) => p.id === activeMatchId) ?? matchProfiles[0];
   const pendingLikeProfile = profileOptions.find((o) => o.id === pendingLikeProfileId) ?? null;
   const pendingLikeLabel = pendingLikeProfile?.label.replace("IU profile", "Profile") ?? "";
+  const compareProfile = profileOptions.find((o) => o.id === compareTabId) ?? profileOptions[0];
 
   const notificationCount = [chaEunwooChoice, byeonWooseokChoice].filter(Boolean).length;
 
@@ -220,6 +224,160 @@ export function DatingAlgorithmsPrototype({
     </div>
   ) : null;
 
+  /* ── Mobile full-screen mode (onBack provided) ── */
+  if (onBack) {
+    if (screen === "legacy") {
+      return (
+        <div className="relative h-full w-full">
+          <button
+            type="button"
+            onClick={onBack}
+            className="absolute left-3 top-3 z-50 rounded-full bg-white/85 px-3 py-1.5 text-xs font-bold text-[#4b4550] shadow-[0_4px_12px_rgba(0,0,0,0.12)] backdrop-blur-sm"
+          >
+            ← Back
+          </button>
+          <LegacyDatingAlgorithmsContent />
+        </div>
+      );
+    }
+
+    if (screen === "compare") {
+      return (
+        <section className="flex h-full w-full flex-col overflow-y-auto">
+          {pendingModal}
+          {/* Top bar */}
+          <div className="flex shrink-0 items-center justify-between border-b border-black/10 bg-white/90 px-3 py-2.5 backdrop-blur-sm">
+            <button
+              type="button"
+              onClick={onBack}
+              className="shrink-0 rounded-full bg-[#f5f0ff] px-3 py-1.5 text-xs font-bold text-[#4b4550]"
+            >
+              {String.fromCharCode(8592)} Back
+            </button>
+            <button
+              type="button"
+              onClick={() => setScreen("legacy")}
+              className="shrink-0 rounded-full bg-[#f5f0ff] px-3 py-1.5 text-xs font-bold text-[#4b4550]"
+            >
+              Study {String.fromCharCode(8594)}
+            </button>
+          </div>
+          {/* Description as running text */}
+          <p className="px-5 pt-4 pb-3 text-sm leading-relaxed text-[#4b4550]">
+            {activeMatchId === "cha-eunwoo"
+              ? "You are IU, and you have 3 profile versions you can send to Cha Eun-woo. Select a profile below to preview it, then tap to send your Like."
+              : "You have 3 profile versions you can send to Byeon Woo-seok. Select a profile below to preview it, then tap to send your Like."}
+          </p>
+          {/* Profile tab buttons */}
+          <div className="flex shrink-0 gap-2 px-5 pb-4">
+            {profileOptions.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setCompareTabId(option.id)}
+                className={`flex-1 rounded-full py-1.5 text-xs font-bold transition ${
+                  compareTabId === option.id
+                    ? "bg-[#ff7ea7] text-white"
+                    : "bg-[#f5f0ff] text-[#4b4550]"
+                }`}
+              >
+                {option.label.replace("IU profile", "Profile ")}
+              </button>
+            ))}
+          </div>
+          {/* Selected profile */}
+          <div className="flex shrink-0 justify-center pb-6">
+            <button
+              type="button"
+              aria-label={compareProfile.label}
+              onClick={() => setPendingLikeProfileId(compareTabId)}
+              className="w-[70%] overflow-hidden rounded-[24px] border-[5px] border-[#dad3d9] bg-white shadow-[0_10px_24px_rgba(0,0,0,0.10)] transition active:scale-[0.98] hover:border-[#ffb1c8]"
+            >
+              <img
+                src={compareProfile.src}
+                alt={compareProfile.label}
+                className="aspect-[375/814] w-full object-cover object-top select-none"
+                draggable={false}
+              />
+            </button>
+          </div>
+        </section>
+      );
+    }
+
+    /* home + candidate: 80% width image + description below */
+    return (
+      <section className="flex h-full w-full flex-col overflow-y-auto">
+        {pendingModal}
+        {/* Top bar — Back and Study only, description moved below */}
+        <div className="flex shrink-0 items-center justify-between bg-white/90 px-3 py-2.5 backdrop-blur-sm">
+          <button
+            type="button"
+            onClick={onBack}
+            className="shrink-0 rounded-full bg-[#f5f0ff] px-3 py-1.5 text-xs font-bold text-[#4b4550]"
+          >
+            ← Back
+          </button>
+          <button
+            type="button"
+            onClick={() => setScreen("legacy")}
+            className="shrink-0 rounded-full bg-[#f5f0ff] px-3 py-1.5 text-xs font-bold text-[#4b4550]"
+          >
+            Study →
+          </button>
+        </div>
+        {/* Description above the image */}
+        <p className="px-5 pt-3 pb-1 text-sm leading-relaxed text-[#4b4550]">
+          {screen === "home"
+            ? <>This is a short demo of a dating app I designed. To get a quick feel for the experience, tap &ldquo;Get Started.&rdquo;</>
+            : <>Tap &ldquo;Like&rdquo; if you want a match</>}
+        </p>
+        {/* App image at ~80% width, with card border matching the compare screen */}
+        <div className="flex shrink-0 justify-center py-3">
+          <div className="relative w-[80%] overflow-hidden rounded-[24px] border-[5px] border-[#dad3d9] bg-white shadow-[0_10px_24px_rgba(0,0,0,0.10)]">
+            {screen === "home" ? (
+              <>
+                <img
+                  src={homeScreenSrc}
+                  alt="Datemate home screen"
+                  className="h-auto w-full select-none"
+                  draggable={false}
+                />
+                <button
+                  type="button"
+                  aria-label="Open Cha Eunwoo profile"
+                  className="absolute left-[22.3%] top-[83.05%] h-[6.95%] w-[55.5%] rounded-full"
+                  onClick={() => {
+                    setActiveMatchId("cha-eunwoo");
+                    setPendingLikeProfileId(null);
+                    setScreen("candidate");
+                  }}
+                />
+
+              </>
+            ) : (
+              <>
+                <img
+                  src={activeMatch.src}
+                  alt={`${activeMatch.label} dating profile screen`}
+                  className="h-auto w-full select-none"
+                  draggable={false}
+                />
+                <button
+                  type="button"
+                  aria-label={`Like ${activeMatch.label}`}
+                  className="absolute left-[34.5%] top-[86.1%] h-[10.3%] w-[31%] rounded-full"
+                  onClick={() => setScreen("compare")}
+                />
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  /* ── Desktop mode ── */
   return (
     <div className="relative h-full w-full">
       {bellButton}
@@ -251,39 +409,45 @@ export function DatingAlgorithmsPrototype({
               </div>
             </div>
 
-            <aside className="flex h-full min-h-0 min-w-0 flex-col justify-center">
-              <div className="mb-5 flex justify-center">
-                <p className="rounded-[18px] border-[4px] border-[#ff7ea7] bg-white px-5 py-3 text-center text-[18px] font-black leading-tight text-[#4b4550] shadow-[0_10px_20px_rgba(0,0,0,0.08)]">
-                  {activeMatchId === "cha-eunwoo" ? (
-                    <>You are IU, and you have 3 profile versions you can send to Cha Eun-woo.<br />Which version would you like to send?</>
-                  ) : (
-                    <>You have 3 profile versions you can send to Byeon Woo-seok.<br />Which version would you like to send?</>
-                  )}
-                </p>
-              </div>
-
-              <div className="grid w-full min-w-0 grid-cols-3 gap-3">
+            <aside className="flex h-full min-h-0 min-w-0 flex-col justify-center gap-5 py-6">
+              {/* Description as running text */}
+              <p className="text-[15px] leading-relaxed text-[#4b4550]">
+                {activeMatchId === "cha-eunwoo"
+                  ? "You are IU, and you have 3 profile versions you can send to Cha Eun-woo. Select a profile to preview it, then click to send your Like."
+                  : "You have 3 profile versions you can send to Byeon Woo-seok. Select a profile to preview it, then click to send your Like."}
+              </p>
+              {/* Profile tab buttons */}
+              <div className="flex gap-2">
                 {profileOptions.map((option) => (
                   <button
                     key={option.id}
                     type="button"
-                    aria-label={option.label}
-                    onClick={() => setPendingLikeProfileId(option.id)}
-                    className="flex min-w-0 flex-col items-center gap-2 rounded-[30px] border-[6px] border-[#dad3d9] bg-white/90 p-[7px] shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition hover:border-[#ffb1c8]"
+                    onClick={() => setCompareTabId(option.id)}
+                    className={`flex-1 rounded-full py-2 text-xs font-bold transition ${
+                      compareTabId === option.id
+                        ? "bg-[#ff7ea7] text-white shadow-[0_4px_12px_rgba(255,126,167,0.4)]"
+                        : "bg-[#f5f0ff] text-[#4b4550] hover:bg-[#ece6ff]"
+                    }`}
                   >
-                    <div className="w-full overflow-hidden rounded-[22px] bg-white">
-                      <img
-                        src={option.src}
-                        alt={option.label}
-                        className="aspect-[375/814] w-full object-cover object-top"
-                        draggable={false}
-                      />
-                    </div>
-                    <span className="pb-1 text-center text-[11px] font-bold text-[#4b4550]">
-                      {option.label}
-                    </span>
+                    {option.label.replace("IU profile", "Profile ")}
                   </button>
                 ))}
+              </div>
+              {/* Selected profile */}
+              <div className="flex flex-1 min-h-0 justify-center">
+                <button
+                  type="button"
+                  aria-label={compareProfile.label}
+                  onClick={() => setPendingLikeProfileId(compareTabId)}
+                  className="relative aspect-[375/814] h-full overflow-hidden rounded-[30px] border-[6px] border-[#dad3d9] bg-white shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition hover:border-[#ffb1c8] active:scale-[0.98]"
+                >
+                  <img
+                    src={compareProfile.src}
+                    alt={compareProfile.label}
+                    className="h-full w-full object-cover object-top select-none"
+                    draggable={false}
+                  />
+                </button>
               </div>
             </aside>
           </div>
@@ -292,7 +456,6 @@ export function DatingAlgorithmsPrototype({
       ) : (
         /* home and candidate screens */
         <section className="flex h-full w-full flex-col">
-          {/* Top bar: description/instruction left, Move to Study + bell right */}
           <div className="flex shrink-0 items-center gap-4 px-6 py-4">
             {screen === "home" ? (
               <span className="flex-1 rounded-full bg-white/80 px-4 py-2 text-xs font-bold text-[#4b4550] shadow-[0_4px_12px_rgba(0,0,0,0.12)] backdrop-blur-sm">
@@ -312,12 +475,9 @@ export function DatingAlgorithmsPrototype({
             </button>
           </div>
 
-          {/* Phone UI */}
           <div className="flex flex-1 min-h-0 min-w-0 items-center justify-center">
             <div className="relative aspect-[375/814] h-full max-h-full w-full max-w-[280px] rounded-[42px] border-[10px] border-[#c7c7cc] bg-[#c7c7cc] p-[8px] shadow-[0_18px_38px_rgba(0,0,0,0.22)]">
               <div className="pointer-events-none absolute left-1/2 top-[10px] z-20 h-[22px] w-[132px] -translate-x-1/2 rounded-full bg-[#8f8f95]" />
-
-              {/* Tap hint — floats to the right of the phone */}
               {screen === "home" ? (
                 <div className="pointer-events-none absolute left-[calc(100%+20px)] top-[76%] -translate-y-1/2 flex items-center gap-3 z-30">
                   <svg width="40" height="26" viewBox="0 0 40 26" fill="none" className="shrink-0">
@@ -330,7 +490,6 @@ export function DatingAlgorithmsPrototype({
                   </div>
                 </div>
               ) : null}
-
               <div className="h-full w-full overflow-hidden rounded-[32px] bg-white">
                 <div className="relative h-full w-full">
                   {screen === "home" ? (

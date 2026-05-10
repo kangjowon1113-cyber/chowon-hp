@@ -21,8 +21,8 @@ type PhotoItem = {
 };
 
 const photoItems: PhotoItem[] = [
-  { id: "p2", title: "Photo 02", label: "001_image", src: "/home/2.png" },
-  { id: "p1", title: "Photo 01", label: "002_image", src: "/home/1.jpg" },
+  { id: "p1", title: "Photo 01", label: "001_image", src: "/home/1_PC.jpg" },
+  { id: "p2", title: "Photo 02", label: "002_image", src: "/home/2_PC.jpg" },
   { id: "p3", title: "Photo 03", label: "003_image", src: "/home/3.jpg" },
 ];
 
@@ -103,7 +103,7 @@ export function HomeWindow({
             <img
               src={selectedPhoto.src}
               alt={selectedPhoto.title}
-              className="h-full w-full object-contain"
+              className="h-full w-full object-cover"
             />
             <div className="absolute left-3 top-3 bg-white/80 px-2 py-1 text-[11px] font-bold tracking-wide">
               {selectedPhoto.title}

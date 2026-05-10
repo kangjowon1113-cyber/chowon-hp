@@ -228,9 +228,9 @@ export function KoreanEmoticonsContent() {
   const activeCfg = selectedChar ? CHAR_CFG[selectedChar] : null;
 
   return (
-    <section className="h-full w-full overflow-y-auto bg-white p-5 font-system98 text-[#1b1b1b]">
+    <section className="h-full w-full overflow-y-auto bg-white p-3 font-system98 text-[#1b1b1b] sm:p-5">
       {/* ── Header ─────────────────────────────────── */}
-      <h2 className="text-xl font-bold text-[#2f2f2f]">
+      <h2 className="text-base font-bold text-[#2f2f2f] sm:text-xl">
         Korean Emoticons: Understanding How Subtle Emotional Differences Are Evoked Online
       </h2>
 
@@ -260,20 +260,23 @@ export function KoreanEmoticonsContent() {
           {koreanChars.map((item, i) => (
             <div
               key={item.char}
-              className={`grid grid-cols-[64px_140px_1fr] ${
+              className={`flex flex-col sm:grid sm:grid-cols-[64px_140px_1fr] ${
                 i !== koreanChars.length - 1 ? "border-b border-[#e0dce8]" : ""
               }`}
             >
-              <div className="flex items-center justify-center bg-[#f7f7f7] text-[30px] font-black text-[#2f2f2f]">
-                {item.char}
+              <div className="flex items-center gap-3 bg-[#f7f7f7] px-4 py-2 sm:flex-col sm:justify-center sm:gap-0 sm:px-0 sm:py-0">
+                <span className="text-[30px] font-black text-[#2f2f2f]">{item.char}</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9a9099] sm:hidden">
+                  {item.type} · &ldquo;{item.name}&rdquo;
+                </span>
               </div>
-              <div className="flex flex-col justify-center border-r border-[#e0dce8] bg-[#f7f7f7] px-4 py-3">
+              <div className="hidden flex-col justify-center border-r border-[#e0dce8] bg-[#f7f7f7] px-4 py-3 sm:flex">
                 <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#9a9099]">
                   {item.type}
                 </p>
                 <p className="mt-0.5 text-sm font-bold text-[#2f2f2f]">&ldquo;{item.name}&rdquo;</p>
               </div>
-              <div className="flex items-center bg-white px-5 py-3">
+              <div className="flex items-center bg-white px-4 py-2 sm:px-5 sm:py-3">
                 <p className="text-sm leading-6 text-[#4b4550]">{item.description}</p>
               </div>
             </div>
@@ -287,7 +290,7 @@ export function KoreanEmoticonsContent() {
           Emoticon in Context
         </h3>
 
-        <div className="grid grid-cols-[minmax(190px,260px)_1fr] items-start gap-8">
+        <div className="flex flex-col gap-6 sm:grid sm:grid-cols-[minmax(190px,260px)_1fr] sm:items-start sm:gap-8">
           {/* Left — Sentences */}
           <div>
             <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.12em] text-[#9a9099]">
@@ -499,7 +502,7 @@ export function KoreanEmoticonsContent() {
         {/* Side-by-side layout — stacks vertically on smaller viewports */}
         <div className="flex flex-col gap-6 xl:flex-row">
           {/* Left: Scatter Plot */}
-          <div className="h-[420px] min-w-0 flex-1 xl:h-auto">
+          <div className="h-[280px] min-w-0 flex-1 sm:h-[380px] xl:h-auto">
             <EmotionGraph
               hoveredIndex={graphHoveredIndex}
               onHoverChange={setGraphHoveredIndex}
@@ -573,7 +576,7 @@ export function KoreanEmoticonsContent() {
           {researchContributions.map((c, i) => (
             <div
               key={i}
-              className="grid grid-cols-[132px_1fr] items-start gap-3 rounded-[4px] bg-[#f7f7f7] p-3"
+              className="flex flex-col gap-2 rounded-[4px] bg-[#f7f7f7] p-3 sm:grid sm:grid-cols-[132px_1fr] sm:items-start sm:gap-3"
             >
               <div className="win98-outset flex min-h-[48px] items-center justify-center bg-[#c7c7cc] px-3 py-2 text-center text-xs font-bold tracking-[0.08em] text-[#424242]">
                 Contribution {i + 1}

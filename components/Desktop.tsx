@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Folder, Music, Palette } from "lucide-react";
+import { FileText, Folder, LinkedinIcon, Mail, Music, Palette } from "lucide-react";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { EmailComposeWindow } from "@/components/EmailComposeWindow";
 import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
@@ -16,6 +16,7 @@ import { KoreanEmoticonsContent } from "@/components/works/understanding-korean-
 type FolderKey = "work" | "create" | "life";
 type IconKey = "about" | FolderKey;
 type WindowKey = "home" | FolderKey;
+type MobileSectionKey = "about" | "work" | "music" | "artworks";
 
 const desktopItems: Array<{ key: IconKey; label: string }> = [
   { key: "about", label: "About Me" },
@@ -51,6 +52,25 @@ const stickerImages = [
 
 const INITIAL_STICKER_COUNT = 40;
 
+const ARTWORK_GROUPS = [
+  {
+    id: "girl",
+    title: "Girl",
+    images: ["/create/drawing/Girl.jpg"],
+  },
+  {
+    id: "nude-croquis",
+    title: "Nude Croquis",
+    images: [
+      "/create/drawing/nude croquis 1.jpg",
+      "/create/drawing/nude croquis 2.jpg",
+      "/create/drawing/nude croquis 3.jpg",
+      "/create/drawing/nude croquis 4.jpg",
+      "/create/drawing/nude croquis 5.jpg",
+    ],
+  },
+];
+
 type Sticker = {
   id: string;
   src: string;
@@ -70,6 +90,9 @@ type ProjectWindowLayout = {
 export function Desktop() {
   const desktopScale = 0.9;
   const desktopScalePercent = `${(1 / desktopScale) * 100}%`;
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileSection, setMobileSection] = useState<MobileSectionKey>("about");
+  const [mobileWorkProjectId, setMobileWorkProjectId] = useState<string | null>(null);
   const [openState, setOpenState] = useState(initialOpenState);
   const [zIndex, setZIndex] = useState(initialZIndex);
   const [maxZ, setMaxZ] = useState(30);
@@ -92,7 +115,12 @@ export function Desktop() {
     {},
   );
   const [stickers, setStickers] = useState<Sticker[]>([]);
+  const [artworkLightbox, setArtworkLightbox] = useState<{ groupId: string; imgIndex: number } | null>(null);
   const hasSeededInitialStickers = useRef(false);
+  const artworkTouchStartX = useRef<number | null>(null);
+  const activeLightboxGroup = artworkLightbox
+    ? (ARTWORK_GROUPS.find((g) => g.id === artworkLightbox.groupId) ?? null)
+    : null;
   const [emailOpen, setEmailOpen] = useState(false);
 
   const getStickerSize = (src: string, baseSize: number) => {
@@ -206,6 +234,23 @@ export function Desktop() {
   };
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 900px)");
+    const handleMobileChange = () => setIsMobile(mediaQuery.matches);
+
+    handleMobileChange();
+    mediaQuery.addEventListener("change", handleMobileChange);
+    return () => mediaQuery.removeEventListener("change", handleMobileChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+    setMobileSection("about");
+    setMobileWorkProjectId(null);
+  }, [isMobile]);
+
+  useEffect(() => {
     setOpenState((prev) => ({ ...prev, home: true }));
     const taskbarHeight = 40;
     const margin = 24;
@@ -258,6 +303,267 @@ export function Desktop() {
 
     setStickers(generated);
   }, []);
+
+  const renderMobileWorkContent = () => {
+    if (!mobileWorkProjectId) {
+      return (
+        <section className="flex h-full min-h-0 flex-col">
+
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            {WORK_PROJECTS.map((project) => (
+              <button
+                key={project.id}
+                type="button"
+                onClick={() => setMobileWorkProjectId(project.id)}
+                className="win98-outset mb-3 block w-full bg-white p-3 text-left last:mb-0"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6a5acd]">
+                  {project.type}
+                </p>
+                <h3 className="mt-1 text-base font-bold leading-5 text-[#272727]">{project.title}</h3>
+                <p className="mt-1 text-xs leading-4 text-[#464646]">{project.summary}</p>
+                <span className="mt-2 inline-block bg-[#ff1493] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#98ff98]">
+                  {project.status}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    const selectedProject = WORK_PROJECTS.find((project) => project.id === mobileWorkProjectId);
+
+    return (
+      <section className="flex h-full min-h-0 flex-col">
+        <div className="mb-2 border-b border-black/15 pb-2">
+          <button
+            type="button"
+            onClick={() => setMobileWorkProjectId(null)}
+            className="win98-outset bg-winGrey px-3 py-1 text-xs font-bold"
+          >
+            ← Back
+          </button>
+        </div>
+        <div className="min-h-0 flex-1 overflow-auto rounded border border-black/20 bg-white">
+          {mobileWorkProjectId === "p1" ? (
+            <DatingAlgorithmsPrototype />
+          ) : mobileWorkProjectId === "p2" ? (
+            <AIModeratorsContent />
+          ) : mobileWorkProjectId === "p3" ? (
+            <KoreanEmoticonsContent />
+          ) : (
+            <div className="p-4 text-sm text-[#404040]">
+              This project is being prepared for mobile presentation.
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  };
+
+  if (isMobile) {
+    // Dating algorithms: full-screen with no nav bar
+    if (mobileWorkProjectId === "p1") {
+      return (
+        <main className="relative h-screen w-screen overflow-hidden font-system98 text-[#111]">
+          <EmailComposeWindow isOpen={emailOpen} zIndex={9999} onClose={() => setEmailOpen(false)} />
+          <DatingAlgorithmsPrototype onBack={() => setMobileWorkProjectId(null)} />
+        </main>
+      );
+    }
+
+    return (
+      <main className="desktop-grid relative h-screen w-screen overflow-hidden font-system98 text-[#111]">
+        <EmailComposeWindow isOpen={emailOpen} zIndex={9999} onClose={() => setEmailOpen(false)} />
+        <section className="h-full overflow-hidden pb-[56px]">
+          <div className="h-full overflow-y-auto px-3 pb-4 pt-3">
+            {mobileSection !== "about" && !mobileWorkProjectId ? (
+              <div className="mb-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileSection("about");
+                    setMobileWorkProjectId(null);
+                  }}
+                  className="win98-outset bg-white px-3 py-1 text-xs font-bold"
+                >
+                  ← About Me
+                </button>
+              </div>
+            ) : null}
+            {mobileSection === "about" ? (
+              <article className="mx-auto max-w-xl space-y-3">
+                <div className="win98-outset overflow-hidden bg-[#ece6ff]">
+                  <img
+                    src="/home/1_mobile.jpg"
+                    alt="Chowon profile"
+                    className="h-[42vh] w-full object-cover object-center"
+                  />
+                </div>
+                <div className="win98-outset bg-white p-3">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-[#6a5acd]">Profile Card</p>
+                  <h1 className="mt-1 text-2xl font-black tracking-wide">CHOWON</h1>
+                  <p className="text-sm font-bold text-[#4f4f7f]">HCI Researcher · Product Manager · Seoul</p>
+                  <p className="mt-2 text-sm leading-5">
+                    I&apos;m an HCI researcher and Product Manager based in Seoul, passionate about
+                    enhancing social and emotional connections in digital spaces.
+                  </p>
+                  <p className="mt-2 text-sm leading-5">
+                    With a background in interior architecture, I design digital experiences from a
+                    human-centered perspective, and I enjoy music, cooking, and observing people.
+                  </p>
+                </div>
+              </article>
+            ) : mobileSection === "work" ? (
+              renderMobileWorkContent()
+            ) : mobileSection === "music" ? (
+              <section className="h-full overflow-hidden rounded border border-black/20 bg-white">
+                <CreateWindow />
+              </section>
+            ) : (
+              <section className="grid grid-cols-2 gap-2">
+                {ARTWORK_GROUPS.map((group) => (
+                  <button
+                    key={group.id}
+                    type="button"
+                    onClick={() => setArtworkLightbox({ groupId: group.id, imgIndex: 0 })}
+                    className="win98-outset overflow-hidden bg-white text-left"
+                  >
+                    <img
+                      src={group.images[0]}
+                      alt={group.title}
+                      className="h-40 w-full object-cover"
+                    />
+                    <p className="px-2 py-1.5 text-[11px] font-bold text-[#2d2d2d]">{group.title}</p>
+                    {group.images.length > 1 && (
+                      <p className="px-2 pb-1.5 text-[10px] text-[#888]">{group.images.length} images</p>
+                    )}
+                  </button>
+                ))}
+              </section>
+            )}
+          </div>
+        </section>
+
+        <nav className="win98-outset absolute bottom-0 left-0 right-0 z-50 h-[52px] bg-winGrey px-2 pb-[max(env(safe-area-inset-bottom),2px)] pt-1">
+          <div className="flex h-full items-center gap-1">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileSection("work");
+                setMobileWorkProjectId(null);
+              }}
+              className={`win98-outset flex flex-1 items-center justify-center gap-1 py-1 text-xs font-bold ${mobileSection === "work" ? "bg-[#d2ccff]" : "bg-[#efefef]"}`}
+            >
+              <Folder size={12} />
+              Work
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileSection("music")}
+              className={`win98-outset flex flex-1 items-center justify-center gap-1 py-1 text-xs font-bold ${mobileSection === "music" ? "bg-[#ffd39f]" : "bg-[#efefef]"}`}
+            >
+              <Music size={12} />
+              Music
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileSection("artworks")}
+              className={`win98-outset flex flex-1 items-center justify-center gap-1 py-1 text-xs font-bold ${mobileSection === "artworks" ? "bg-[#c8f7d2]" : "bg-[#efefef]"}`}
+            >
+              <Palette size={12} />
+              Artworks
+            </button>
+
+            <div className="mx-0.5 h-5 w-px bg-[#aaaaaa]" />
+
+            <button
+              type="button"
+              onClick={() => setEmailOpen(true)}
+              className="win98-outset flex shrink-0 items-center justify-center px-2 py-1 active:translate-x-px active:translate-y-px"
+              aria-label="Email"
+            >
+              <Mail size={13} />
+            </button>
+            <a
+              href="https://www.linkedin.com/in/chowonkang"
+              target="_blank"
+              rel="noreferrer"
+              className="win98-outset flex shrink-0 items-center justify-center px-2 py-1 active:translate-x-px active:translate-y-px"
+              aria-label="LinkedIn"
+            >
+              <LinkedinIcon size={13} />
+            </a>
+            <a
+              href="/cv.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="win98-outset flex shrink-0 items-center justify-center gap-0.5 px-2 py-1 text-[10px] font-bold no-underline active:translate-x-px active:translate-y-px"
+            >
+              <FileText size={12} />
+              CV
+            </a>
+          </div>
+        </nav>
+
+        {artworkLightbox && activeLightboxGroup && (
+          <div
+            className="fixed inset-0 z-[9999] flex flex-col bg-black/95"
+            onTouchStart={(e) => {
+              artworkTouchStartX.current = e.touches[0].clientX;
+            }}
+            onTouchEnd={(e) => {
+              if (artworkTouchStartX.current === null) return;
+              const dx = e.changedTouches[0].clientX - artworkTouchStartX.current;
+              artworkTouchStartX.current = null;
+              if (Math.abs(dx) < 40) return;
+              const next =
+                dx < 0
+                  ? Math.min(artworkLightbox.imgIndex + 1, activeLightboxGroup.images.length - 1)
+                  : Math.max(artworkLightbox.imgIndex - 1, 0);
+              setArtworkLightbox({ groupId: artworkLightbox.groupId, imgIndex: next });
+            }}
+          >
+            <div className="flex shrink-0 items-center justify-between px-4 py-4">
+              <p className="text-sm font-bold text-white">{activeLightboxGroup.title}</p>
+              {activeLightboxGroup.images.length > 1 && (
+                <p className="text-xs text-white/60">
+                  {artworkLightbox.imgIndex + 1} / {activeLightboxGroup.images.length}
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={() => setArtworkLightbox(null)}
+                className="rounded-full bg-white/15 px-3 py-1 text-sm font-bold text-white"
+              >
+                Close
+              </button>
+            </div>
+            <div className="flex flex-1 min-h-0 items-center justify-center px-4 pb-4">
+              <img
+                src={activeLightboxGroup.images[artworkLightbox.imgIndex]}
+                alt={activeLightboxGroup.title}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            {activeLightboxGroup.images.length > 1 && (
+              <div className="flex shrink-0 justify-center gap-2 pb-6">
+                {activeLightboxGroup.images.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setArtworkLightbox({ groupId: artworkLightbox.groupId, imgIndex: i })}
+                    className={`h-2 w-2 rounded-full transition ${i === artworkLightbox.imgIndex ? "bg-white" : "bg-white/30"}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+    );
+  }
 
   return (
     <main

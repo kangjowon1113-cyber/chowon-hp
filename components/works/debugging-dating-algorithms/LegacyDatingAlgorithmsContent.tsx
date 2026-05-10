@@ -84,8 +84,8 @@ const attractivenessDataImageSrc =
 
 export function LegacyDatingAlgorithmsContent() {
   return (
-    <section className="h-full w-full overflow-y-auto bg-white p-5 text-[#1b1b1b]">
-      <h2 className="text-xl font-bold text-[#2f2f2f]">
+    <section className="h-full w-full overflow-y-auto bg-white p-3 text-[#1b1b1b] sm:p-5">
+      <h2 className="text-base font-bold text-[#2f2f2f] sm:text-xl">
         Debugging Dating Algorithms: How Can We Find True Love?
       </h2>
 
@@ -109,12 +109,12 @@ export function LegacyDatingAlgorithmsContent() {
         <div className="space-y-3">
           {insights.map((insight, index) => (
             <div key={index} className="space-y-3">
-              <div className="grid grid-cols-[132px_1fr] items-center gap-3 rounded-[4px] bg-[#f7f7f7] p-3">
-                <div className="win98-outset flex min-h-[48px] items-center justify-center bg-[#c7c7cc] px-3 py-2 text-center text-xs font-bold tracking-[0.08em] text-[#424242]">
+              <div className="flex flex-col gap-2 rounded-[4px] bg-[#f7f7f7] p-3 sm:grid sm:grid-cols-[132px_1fr] sm:items-center sm:gap-3">
+                <div className="win98-outset flex items-center justify-center bg-[#c7c7cc] px-3 py-1.5 text-center text-xs font-bold tracking-[0.08em] text-[#424242] sm:min-h-[48px] sm:py-2">
                   {`Key Insight ${index + 1}`}
                 </div>
-                <div className="flex min-h-[48px] items-center">
-                  <p className="text-[17px] leading-7 text-[#2f2f2f]">{insight.content}</p>
+                <div>
+                  <p className="text-sm leading-6 text-[#2f2f2f] sm:text-[17px] sm:leading-7">{insight.content}</p>
                 </div>
               </div>
 
@@ -139,28 +139,28 @@ export function LegacyDatingAlgorithmsContent() {
                     </div>
 
                     {/* 3 profiles */}
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4">
                       {iuProfiles.map((profile) => (
                         <div key={profile.persona} className="flex flex-col items-center">
-                          <div className="mb-2 flex flex-wrap justify-center gap-1">
+                          <div className="mb-1.5 flex flex-wrap justify-center gap-1">
                             {profile.keywords.map((kw) => (
                               <span
                                 key={kw}
-                                className={`rounded-[4px] border px-2 py-0.5 text-[11px] font-bold ${profile.color.border} ${profile.color.bg} ${profile.color.text}`}
+                                className={`rounded-[4px] border px-1.5 py-0.5 text-[9px] font-bold sm:px-2 sm:text-[11px] ${profile.color.border} ${profile.color.bg} ${profile.color.text}`}
                               >
                                 {kw}
                               </span>
                             ))}
                           </div>
-                          <div className="overflow-hidden rounded-[10px] border border-[#d8d8d8] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.06)]">
+                          <div className="overflow-hidden rounded-[8px] border border-[#d8d8d8] bg-white p-0.5 shadow-[0_4px_10px_rgba(0,0,0,0.06)] sm:rounded-[10px] sm:p-1">
                             <img
                               src={profile.src}
                               alt={profile.persona}
-                              className="block w-[120px] rounded-[8px]"
+                              className="block w-full rounded-[6px] sm:w-[120px] sm:rounded-[8px]"
                               draggable={false}
                             />
                           </div>
-                          <p className={`mt-2 text-center text-xs font-bold tracking-[0.06em] ${profile.color.labelText}`}>
+                          <p className={`mt-1.5 text-center text-[10px] font-bold tracking-[0.06em] sm:mt-2 sm:text-xs ${profile.color.labelText}`}>
                             {profile.persona}
                           </p>
                         </div>
@@ -221,45 +221,45 @@ export function LegacyDatingAlgorithmsContent() {
               {index === 0 ? (
                 <div className="rounded-[4px] bg-[#f7f7f7] p-4">
                   <div className="rounded-[4px] bg-white p-4">
-                    <div className="flex items-center justify-center gap-5">
-                      <div>
-                        <div className="flex items-end justify-center gap-3">
-                          <div className="inline-flex w-fit rounded-[12px] border border-[#d8d8d8] bg-white p-1.5 shadow-[0_4px_10px_rgba(0,0,0,0.06)]">
+                    <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-5">
+                      <div className="w-full sm:w-auto">
+                        <div className="flex items-end justify-center gap-2 sm:gap-3">
+                          <div className="flex-1 rounded-[10px] border border-[#d8d8d8] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.06)] sm:flex-none sm:rounded-[12px] sm:p-1.5">
                             <img
                               src={amandaImageSrc}
                               alt="Amanda app interface"
-                              className="block w-[154px] rounded-[10px] bg-white"
+                              className="block w-full rounded-[8px] bg-white sm:w-[120px] sm:rounded-[10px]"
                               draggable={false}
                             />
                           </div>
-                          <div className="inline-flex w-fit rounded-[12px] border border-[#d8d8d8] bg-white p-1.5 shadow-[0_4px_10px_rgba(0,0,0,0.06)]">
+                          <div className="flex-1 rounded-[10px] border border-[#d8d8d8] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.06)] sm:flex-none sm:rounded-[12px] sm:p-1.5">
                             <img
                               src={tinderMatchImageSrc}
                               alt="Tinder match interface"
-                              className="block w-[154px] rounded-[10px] bg-white"
+                              className="block w-full rounded-[8px] bg-white sm:w-[120px] sm:rounded-[10px]"
                               draggable={false}
                             />
                           </div>
                         </div>
-                        <p className="mt-3 text-center text-xs font-bold tracking-[0.06em] text-[#4b4550]">
+                        <p className="mt-2 text-center text-xs font-bold tracking-[0.06em] text-[#4b4550]">
                           Attractiveness Score, Likes, Ranking
                         </p>
                       </div>
 
-                      <div className="flex items-center justify-center text-[44px] font-black leading-none text-[#ff7ea7]">
+                      <div className="text-2xl font-black leading-none text-[#ff7ea7] sm:text-[44px]">
                         &#10140;
                       </div>
 
-                      <div>
-                        <div className="inline-flex w-fit rounded-[12px] border border-[#d8d8d8] bg-white p-1.5 shadow-[0_4px_10px_rgba(0,0,0,0.06)]">
+                      <div className="w-full sm:w-auto">
+                        <div className="rounded-[10px] border border-[#d8d8d8] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.06)] sm:inline-flex sm:w-fit sm:rounded-[12px] sm:p-1.5">
                           <img
                             src={attractivenessDataImageSrc}
                             alt="Attractiveness data interface"
-                            className="block w-[202px] rounded-[10px] bg-white"
+                            className="block w-full rounded-[8px] bg-white sm:w-[180px] sm:rounded-[10px]"
                             draggable={false}
                           />
                         </div>
-                        <p className="mt-3 text-center text-xs font-bold tracking-[0.06em] text-[#4b4550]">
+                        <p className="mt-2 text-center text-xs font-bold tracking-[0.06em] text-[#4b4550]">
                           Self Understanding, Patterns
                         </p>
                       </div>
@@ -318,75 +318,78 @@ export function LegacyDatingAlgorithmsContent() {
               {index === 2 ? (
                 <div className="rounded-[4px] bg-[#f7f7f7] p-4">
                   <div className="rounded-[4px] bg-white p-4">
-                    <div className="flex items-start gap-6">
-                      {/* Left: 차은우 profile */}
-                      <div className="flex flex-col items-center">
-                        <div className="mb-2 flex flex-wrap justify-center gap-1">
-                          {chaEunwooKeywords.map((kw) => (
-                            <span
-                              key={kw}
-                              className="rounded-[4px] border border-[#d8d8d8] bg-[#f7f7f7] px-2 py-0.5 text-[11px] font-bold text-[#4b4550]"
-                            >
-                              {kw}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="overflow-hidden rounded-[10px] border border-[#d8d8d8] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.06)]">
-                          <img
-                            src={chaEunwooSrc}
-                            alt="Cha Eunwoo profile"
-                            className="block w-[120px] rounded-[8px]"
-                            draggable={false}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Arrow */}
-                      <div className="flex flex-1 items-center justify-center self-center text-[36px] font-black leading-none text-[#ff7ea7]">
-                        &#8596;
-                      </div>
-
-                      {/* Right: 3 IU profiles */}
-                      <div className="flex gap-3">
-                        {iuProfiles.map((profile) => {
-                          const isMatch = profile.persona === "Persona 2";
-                          return (
-                            <div key={profile.persona} className="flex flex-col items-center">
-                              <div className="mb-2 flex flex-wrap justify-center gap-1">
-                                {profile.keywords.map((kw) => (
-                                  <span
-                                    key={kw}
-                                    className={`rounded-[4px] border px-2 py-0.5 text-[11px] font-bold ${profile.color.border} ${profile.color.bg} ${profile.color.text}`}
-                                  >
-                                    {kw}
-                                  </span>
-                                ))}
-                              </div>
-                              <div
-                                className={`overflow-hidden rounded-[10px] bg-white p-1 shadow-[0_4px_10px_rgba(0,0,0,0.06)] ${
-                                  isMatch
-                                    ? "border-2 border-[#6a5acd] shadow-[0_0_0_3px_rgba(106,90,205,0.15)]"
-                                    : "border border-[#d8d8d8]"
-                                }`}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+                      {/* Cha Eunwoo + arrow + IU profiles: on mobile show ChaEunwoo left, IU profiles right in same row */}
+                      <div className="flex items-start gap-3 sm:contents">
+                        {/* Left: 차은우 profile */}
+                        <div className="flex flex-col items-center">
+                          <div className="mb-1.5 flex flex-wrap justify-center gap-1">
+                            {chaEunwooKeywords.map((kw) => (
+                              <span
+                                key={kw}
+                                className="rounded-[4px] border border-[#d8d8d8] bg-[#f7f7f7] px-1.5 py-0.5 text-[9px] font-bold text-[#4b4550] sm:px-2 sm:text-[11px]"
                               >
-                                <img
-                                  src={profile.src}
-                                  alt={profile.persona}
-                                  className="block w-[120px] rounded-[8px]"
-                                  draggable={false}
-                                />
-                              </div>
-                              <p className={`mt-2 text-center text-xs font-bold tracking-[0.06em] ${profile.color.labelText}`}>
-                                {profile.persona}
-                              </p>
-                              {isMatch ? (
-                                <p className="mt-1 text-center text-[10px] font-bold text-[#6a5acd]">
-                                  Shares overlapping interests
+                                {kw}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="overflow-hidden rounded-[8px] border border-[#d8d8d8] bg-white p-0.5 shadow-[0_4px_10px_rgba(0,0,0,0.06)] sm:rounded-[10px] sm:p-1">
+                            <img
+                              src={chaEunwooSrc}
+                              alt="Cha Eunwoo profile"
+                              className="block w-[72px] rounded-[6px] sm:w-[100px] sm:rounded-[8px]"
+                              draggable={false}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Arrow */}
+                        <div className="flex self-center text-2xl font-black leading-none text-[#ff7ea7] sm:flex-1 sm:items-center sm:justify-center sm:text-[36px]">
+                          &#8596;
+                        </div>
+
+                        {/* Right: 3 IU profiles */}
+                        <div className="flex flex-1 gap-1.5 sm:flex-none sm:gap-3">
+                          {iuProfiles.map((profile) => {
+                            const isMatch = profile.persona === "Persona 2";
+                            return (
+                              <div key={profile.persona} className="flex flex-col items-center">
+                                <div className="mb-1.5 flex flex-wrap justify-center gap-0.5">
+                                  {profile.keywords.map((kw) => (
+                                    <span
+                                      key={kw}
+                                      className={`rounded-[4px] border px-1 py-0.5 text-[8px] font-bold sm:px-2 sm:text-[11px] ${profile.color.border} ${profile.color.bg} ${profile.color.text}`}
+                                    >
+                                      {kw}
+                                    </span>
+                                  ))}
+                                </div>
+                                <div
+                                  className={`overflow-hidden rounded-[8px] bg-white p-0.5 shadow-[0_4px_10px_rgba(0,0,0,0.06)] sm:rounded-[10px] sm:p-1 ${
+                                    isMatch
+                                      ? "border-2 border-[#6a5acd] shadow-[0_0_0_3px_rgba(106,90,205,0.15)]"
+                                      : "border border-[#d8d8d8]"
+                                  }`}
+                                >
+                                  <img
+                                    src={profile.src}
+                                    alt={profile.persona}
+                                    className="block w-[60px] rounded-[6px] sm:w-[100px] sm:rounded-[8px]"
+                                    draggable={false}
+                                  />
+                                </div>
+                                <p className={`mt-1 text-center text-[9px] font-bold tracking-[0.04em] sm:mt-2 sm:text-xs sm:tracking-[0.06em] ${profile.color.labelText}`}>
+                                  {profile.persona}
                                 </p>
-                              ) : null}
-                            </div>
-                          );
-                        })}
+                                {isMatch ? (
+                                  <p className="mt-0.5 text-center text-[8px] font-bold text-[#6a5acd] sm:mt-1 sm:text-[10px]">
+                                    Shares overlapping interests
+                                  </p>
+                                ) : null}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -470,28 +473,28 @@ export function LegacyDatingAlgorithmsContent() {
         </h3>
 
         {/* Process flow — centered */}
-        <div className="mt-4 flex justify-center">
-          <div className="flex items-start gap-1">
+        <div className="mt-4">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-start sm:justify-center sm:gap-1">
             {[
               { step: "01", label: "IDI Sessions", sub: "22 people, 90m, Zoom" },
               { step: "02", label: "Understand User Challenges", sub: null },
               { step: "03", label: "User Participatory Design Workshops", sub: "3 People 5 Groups, 90m, Face to Face" },
               { step: "04", label: "Key Insights", sub: null },
             ].map(({ step, label, sub }, i, arr) => (
-              <div key={step} className="flex shrink-0 items-center gap-1">
-                <div className="flex flex-col items-center rounded-[6px] bg-[#f7f7f7] px-4 py-3 shadow-[0_2px_6px_rgba(0,0,0,0.06)]">
+              <div key={step} className="flex items-center gap-1 sm:shrink-0">
+                <div className="flex w-full flex-col items-center rounded-[6px] bg-[#f7f7f7] px-3 py-2.5 shadow-[0_2px_6px_rgba(0,0,0,0.06)] sm:px-4 sm:py-3">
                   <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#ff7ea7]">
                     {step}
                   </span>
-                  <span className="mt-0.5 text-center text-xs font-bold text-[#2f2f2f]">
+                  <span className="mt-0.5 text-center text-[11px] font-bold text-[#2f2f2f] sm:text-xs">
                     {label}
                   </span>
                   {sub ? (
-                    <span className="mt-1 text-center text-[10px] text-[#9a9099]">{sub}</span>
+                    <span className="mt-1 text-center text-[9px] text-[#9a9099] sm:text-[10px]">{sub}</span>
                   ) : null}
                 </div>
                 {i < arr.length - 1 ? (
-                  <span className="mt-[-8px] text-base font-bold text-[#d8d0d7]">→</span>
+                  <span className="hidden text-base font-bold text-[#d8d0d7] sm:mt-[-8px] sm:block">→</span>
                 ) : null}
               </div>
             ))}
@@ -505,14 +508,14 @@ export function LegacyDatingAlgorithmsContent() {
             { src: "/works/debugging-dating-algorithms/participatory%20design%20workshop.png", alt: "Participatory design workshop", label: "Participatory Design Workshop" },
             { src: "/works/debugging-dating-algorithms/Design%20Workshop%20example.png", alt: "Design workshop example", label: "How we Conducted the Workshop" },
           ].map(({ src, alt, label }) => (
-            <div key={label} className="w-[80%] overflow-hidden rounded-[8px] border border-[#e8e4e8] bg-white shadow-[0_4px_10px_rgba(0,0,0,0.06)]">
+            <div key={label} className="w-full overflow-hidden rounded-[8px] border border-[#e8e4e8] bg-white shadow-[0_4px_10px_rgba(0,0,0,0.06)] sm:w-[80%]">
               <img src={src} alt={alt} className="w-full object-cover" draggable={false} />
               <p className="px-3 py-2 text-xs font-bold text-[#6d6670]">{label}</p>
             </div>
           ))}
 
           {/* Design workshop explanation */}
-          <div className="w-[80%] rounded-[8px] bg-[#f7f7f7] p-4">
+          <div className="w-full rounded-[8px] bg-[#f7f7f7] p-4 sm:w-[80%]">
             <h4 className="text-sm font-bold text-[#2f2f2f]">
               Methodology: Metaphoric Design Workshop
             </h4>

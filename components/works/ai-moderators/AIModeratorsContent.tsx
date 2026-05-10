@@ -166,7 +166,7 @@ function ConversationFlow() {
       <p className="mb-3 text-sm font-bold text-[#4b4550]">
         Live Moderation in Action
       </p>
-      <div className="flex items-start gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
         {/* User */}
         <div className="flex-1 rounded-[10px] rounded-bl-[3px] border border-[#e0dce8] bg-white p-3 shadow-sm">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#9a9099]">User says</p>
@@ -175,7 +175,7 @@ function ConversationFlow() {
           </p>
         </div>
 
-        <div className="mt-8 shrink-0 text-[#c0b8cc]">→</div>
+        <div className="hidden shrink-0 text-[#c0b8cc] sm:mt-8 sm:block">→</div>
 
         {/* AI Detects */}
         <div className="flex-1 rounded-[10px] border border-[#A29BFE]/40 bg-[#f5f4ff] p-3">
@@ -194,7 +194,7 @@ function ConversationFlow() {
           </ul>
         </div>
 
-        <div className="mt-8 shrink-0 text-[#c0b8cc]">→</div>
+        <div className="hidden shrink-0 text-[#c0b8cc] sm:mt-8 sm:block">→</div>
 
         {/* Next Action */}
         <div className="flex-1 rounded-[10px] border border-[#55E6C1]/40 bg-[#f0faf8] p-3">
@@ -204,7 +204,7 @@ function ConversationFlow() {
           </p>
         </div>
 
-        <div className="mt-8 shrink-0 text-[#c0b8cc]">→</div>
+        <div className="hidden shrink-0 text-[#c0b8cc] sm:mt-8 sm:block">→</div>
 
         {/* AI Response */}
         <div className="flex-1 rounded-[10px] rounded-br-[3px] border border-[#000080]/20 bg-[#f0f0ff] p-3">
@@ -254,7 +254,7 @@ function ArchitectSection() {
         Researcher's Role in Structuring the AI Moderator's Thinking Logic
       </p>
 
-      <div className="flex items-start gap-0 overflow-hidden rounded-[10px] border border-[#e0dce8] bg-[#faf9fb]">
+      <div className="flex flex-col overflow-hidden rounded-[10px] border border-[#e0dce8] bg-[#faf9fb] sm:flex-row sm:items-start">
         {/* Left: Full logic tree */}
         <div className="shrink-0 p-4 pr-2">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-[#9a9099]">Full Research Logic</p>
@@ -262,7 +262,7 @@ function ArchitectSection() {
         </div>
 
         {/* Divider */}
-        <div className="self-stretch w-px bg-[#e0dce8] shrink-0" />
+        <div className="h-px w-full bg-[#e0dce8] sm:h-auto sm:w-px sm:self-stretch" />
 
         {/* Right: Q1+IF detail */}
         <div className="flex-1 min-w-0 p-4">
@@ -305,7 +305,7 @@ function ArchitectSection() {
           </svg>
 
           {/* IF cards */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {ifCards.map((card, i) => (
               <div key={i} className="rounded-[8px] border p-3"
                 style={{ borderColor: card.borderColor, backgroundColor: card.bg }}>
@@ -357,7 +357,7 @@ function ConversionEngine() {
   return (
     <div className="mt-5 rounded-[10px] border border-[#e0dce8] bg-[#faf9fb] p-5">
       <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.14em] text-[#b0a8b8]">Data Transformation</p>
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         {/* Raw quotes */}
         <div className="flex-1 space-y-1.5">
           <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.1em] text-[#9a9099]">Raw Responses</p>
@@ -369,9 +369,9 @@ function ConversionEngine() {
         </div>
 
         {/* Arrow */}
-        <div className="flex flex-col items-center justify-center pt-10">
+        <div className="flex items-center justify-center gap-2 sm:flex-col sm:gap-0 sm:pt-10">
           <div className="rounded-[6px] bg-[#000080] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.08em] text-white">AI</div>
-          <span className="mt-1 text-lg font-bold text-[#000080]">→</span>
+          <span className="text-lg font-bold text-[#000080] sm:mt-1">→</span>
         </div>
 
         {/* Clustered output */}
@@ -427,10 +427,10 @@ const PLAYBOOK = [
 
 export function AIModeratorsContent() {
   return (
-    <section className="h-full w-full overflow-y-auto bg-white p-5 text-[#1b1b1b]">
+    <section className="h-full w-full overflow-y-auto bg-white p-3 text-[#1b1b1b] sm:p-5">
 
       {/* Header */}
-      <h2 className="text-xl font-bold text-[#2f2f2f]">
+      <h2 className="text-base font-bold text-[#2f2f2f] sm:text-xl">
         AI moderators: Redefining Research through Large-Scale Qualitative AI Moderation
       </h2>
       <p className="mt-3 text-[12px] font-bold uppercase tracking-[0.06em] text-[#6a5acd]">
@@ -451,7 +451,7 @@ export function AIModeratorsContent() {
         <p className="text-sm leading-7 text-[#2f2f2f]">
           For decades, researchers have been forced to choose.
         </p>
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
           <div className="rounded-[10px] border-[1.5px] border-[#000080]/20 bg-[#f0f0ff] p-5">
             <span className="rounded-[4px] bg-[#000080] px-2 py-0.5 text-sm font-bold uppercase tracking-[0.08em] text-white">Quantitative Survey</span>
             <ul className="mt-4 space-y-2">
@@ -555,8 +555,8 @@ export function AIModeratorsContent() {
         <p className="mb-5 text-sm leading-7 text-[#2f2f2f]">
           This methodology isn't a silver bullet for every study. It is a high-precision tool designed for moments when you need both <strong>Context</strong> and <strong>Certainty</strong> at scale.
         </p>
-        <div className="overflow-hidden rounded-[10px] border border-[#e0dce8]">
-          <table className="w-full border-collapse text-[12px]">
+        <div className="overflow-x-auto rounded-[10px] border border-[#e0dce8]">
+          <table className="w-full min-w-[560px] border-collapse text-[12px]">
             <thead>
               <tr className="bg-[#f0f0ff]">
                 {["Research Type", "Traditional Limits", "Large-Scale Qual Advantage", "Example Use Case"].map((h, i) => (
