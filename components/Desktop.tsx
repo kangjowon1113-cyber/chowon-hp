@@ -22,7 +22,7 @@ const desktopItems: Array<{ key: IconKey; label: string }> = [
   { key: "about", label: "About Me" },
   { key: "work", label: "Work" },
   { key: "create", label: "Music" },
-  { key: "life", label: "Artworks" },
+  { key: "life", label: "Art" },
 ];
 
 const initialZIndex: Record<WindowKey, number> = {
@@ -70,6 +70,14 @@ const ARTWORK_GROUPS = [
     ],
   },
 ];
+
+const profileTags = [
+  { label: "#HCI_Researcher", textColor: "#98FF98", bgColor: "#FF1493" },
+  { label: "#Product_Manager", textColor: "#FF69B4", bgColor: "#98FF98" },
+  { label: "#Architecture_Designer", textColor: "#FF8C00", bgColor: "#E6B6FF" },
+  { label: "#Music", textColor: "#E6E6FA", bgColor: "#FF6B35" },
+  { label: "#Maximalist", textColor: "#FFF700", bgColor: "#BA55D3" },
+] as const;
 
 type Sticker = {
   id: string;
@@ -410,9 +418,24 @@ export function Desktop() {
                     enhancing social and emotional connections in digital spaces.
                   </p>
                   <p className="mt-2 text-sm leading-5">
-                    With a background in interior architecture, I design digital experiences from a
-                    human-centered perspective, and I enjoy music, cooking, and observing people.
+                    With a background in interior architecture, I&apos;ve long been fascinated by how
+                    physical environments shape human experience — a perspective I now bring to designing
+                    online interactions. Beyond the screen, I find balance in music, experimenting in the
+                    kitchen, and collecting moments from the world with curiosity.
                   </p>
+                  <div className="mt-3 border-t-2 border-[#c0c0c0] pt-3">
+                    <div className="flex flex-wrap gap-2">
+                      {profileTags.map((item) => (
+                        <span
+                          key={item.label}
+                          className="win98-outset inline-block px-2 py-1 text-[11px] font-bold tracking-wide shadow-[inset_0_-1px_0_rgba(0,0,0,0.12)]"
+                          style={{ backgroundColor: item.bgColor, color: item.textColor }}
+                        >
+                          {item.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </article>
             ) : mobileSection === "work" ? (
@@ -473,7 +496,7 @@ export function Desktop() {
               className={`win98-outset flex flex-1 items-center justify-center gap-1 py-1 text-xs font-bold ${mobileSection === "artworks" ? "bg-[#c8f7d2]" : "bg-[#efefef]"}`}
             >
               <Palette size={12} />
-              Artworks
+              Art
             </button>
 
             <div className="mx-0.5 h-5 w-px bg-[#aaaaaa]" />
@@ -771,7 +794,7 @@ export function Desktop() {
           </RetroWindow>
 
           <RetroWindow
-            title="Artworks"
+            title="Art"
             isOpen={openState.life}
             zIndex={zIndex.life}
             gradientColors={["#87CEEB", "#98FF98"]}

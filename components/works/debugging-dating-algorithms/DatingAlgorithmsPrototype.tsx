@@ -228,15 +228,19 @@ export function DatingAlgorithmsPrototype({
   if (onBack) {
     if (screen === "legacy") {
       return (
-        <div className="relative h-full w-full">
-          <button
-            type="button"
-            onClick={onBack}
-            className="absolute left-3 top-3 z-50 rounded-full bg-white/85 px-3 py-1.5 text-xs font-bold text-[#4b4550] shadow-[0_4px_12px_rgba(0,0,0,0.12)] backdrop-blur-sm"
-          >
-            ← Back
-          </button>
-          <LegacyDatingAlgorithmsContent />
+        <div className="flex h-full w-full flex-col">
+          <div className="shrink-0 border-b border-black/15 bg-white px-3 py-2">
+            <button
+              type="button"
+              onClick={onBack}
+              className="win98-outset bg-winGrey px-3 py-1 text-xs font-bold"
+            >
+              {String.fromCharCode(8592)} Back
+            </button>
+          </div>
+          <div className="min-h-0 flex-1">
+            <LegacyDatingAlgorithmsContent />
+          </div>
         </div>
       );
     }
