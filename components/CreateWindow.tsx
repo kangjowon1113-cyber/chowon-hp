@@ -4,6 +4,13 @@ import { useState } from "react";
 
 const playlistItems = [
   {
+    id: "v0",
+    title: "M.Y.M.P - Say You Love Me Cover",
+    duration: "",
+    embedUrl: "https://www.youtube.com/embed/rWs8TMsBuK0?si=Nb7wN20JfyDPkoGI&autoplay=1",
+    thumbnailUrl: "https://img.youtube.com/vi/rWs8TMsBuK0/hqdefault.jpg",
+  },
+  {
     id: "v1",
     title: "IU - Through the Night Cover",
     duration: "5:15",
@@ -38,6 +45,12 @@ export function CreateWindow() {
 
   return (
     <div className="flex h-full flex-col" style={{ backgroundColor: "#E8E8E7" }}>
+      {/* Bio strip */}
+      <div className="shrink-0 border-b-2 border-[#c0c0c0] bg-[#f5f0ff] px-4 py-2.5">
+        <p className="text-[13px] font-bold text-[#4b4550]">
+          I can&apos;t call myself the best musician, but I do love to sing sometimes 🎤
+        </p>
+      </div>
       {/* Main video viewport — fills top, edge-to-edge */}
       <div className="relative min-h-0 flex-1">
         {activeTrack ? (

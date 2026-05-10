@@ -11,6 +11,9 @@ type HomeWindowProps = {
   minSize?: { width: number; height: number };
   onClose: () => void;
   onFocus: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
+  isMaximized?: boolean;
 };
 
 type PhotoItem = {
@@ -50,6 +53,9 @@ export function HomeWindow({
   minSize = { width: 480, height: 340 },
   onClose,
   onFocus,
+  onMinimize,
+  onMaximize,
+  isMaximized,
 }: HomeWindowProps) {
   const [selectedPhotoId, setSelectedPhotoId] = useState(photoItems[0].id);
 
@@ -69,6 +75,9 @@ export function HomeWindow({
       minSize={minSize}
       onClose={onClose}
       onFocus={onFocus}
+      onMinimize={onMinimize}
+      onMaximize={onMaximize}
+      isMaximized={isMaximized}
     >
       <div className="grid h-full min-h-0 grid-cols-2 gap-3">
         <section className="win98-inset grid min-h-0 h-full grid-cols-[130px_1fr] gap-2 bg-[#f5f8ff] p-2">

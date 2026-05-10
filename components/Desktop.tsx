@@ -79,6 +79,13 @@ const profileTags = [
   { label: "#Maximalist", textColor: "#FFF700", bgColor: "#BA55D3" },
 ] as const;
 
+const mobileStats = [
+  { label: "User Insight", value: 92, color: "bg-[#7b68ee]" },
+  { label: "Problem Solving", value: 88, color: "bg-[#4cc9f0]" },
+  { label: "Storytelling", value: 83, color: "bg-[#ff4d8d]" },
+  { label: "Visual Taste", value: 90, color: "bg-[#f9c74f]" },
+];
+
 type Sticker = {
   id: string;
   src: string;
@@ -130,6 +137,14 @@ export function Desktop() {
     ? (ARTWORK_GROUPS.find((g) => g.id === artworkLightbox.groupId) ?? null)
     : null;
   const [emailOpen, setEmailOpen] = useState(false);
+  const [minimizedState, setMinimizedState] = useState<Record<WindowKey, boolean>>({
+    home: false, work: false, create: false, life: false,
+  });
+  const [maximizedState, setMaximizedState] = useState<Record<WindowKey, boolean>>({
+    home: false, work: false, create: false, life: false,
+  });
+  const [minimizedProjectState, setMinimizedProjectState] = useState<Record<string, boolean>>({});
+  const [maximizedProjectState, setMaximizedProjectState] = useState<Record<string, boolean>>({});
 
   const getStickerSize = (src: string, baseSize: number) => {
     return src === "/stickers/Group 2.png" ? Math.max(14, Math.round(baseSize / 3)) : baseSize;
@@ -163,6 +178,28 @@ export function Desktop() {
       setZIndex((old) => ({ ...old, [key]: next }));
       return next;
     });
+  };
+
+  const minimizeWindow = (key: WindowKey) => {
+    setMinimizedState((prev) => ({ ...prev, [key]: true }));
+  };
+  const restoreWindow = (key: WindowKey) => {
+    setMinimizedState((prev) => ({ ...prev, [key]: false }));
+    focusWindow(key);
+  };
+  const toggleMaximizeWindow = (key: WindowKey) => {
+    setMaximizedState((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const minimizeProjectWindow = (projectId: string) => {
+    setMinimizedProjectState((prev) => ({ ...prev, [projectId]: true }));
+  };
+  const restoreProjectWindow = (projectId: string) => {
+    setMinimizedProjectState((prev) => ({ ...prev, [projectId]: false }));
+    focusProjectWindow(projectId);
+  };
+  const toggleMaximizeProjectWindow = (projectId: string) => {
+    setMaximizedProjectState((prev) => ({ ...prev, [projectId]: !prev[projectId] }));
   };
 
   const handleDesktopItemClick = (key: IconKey) => {
@@ -370,6 +407,19 @@ export function Desktop() {
     );
   };
 
+  const minimizedWindowChips = [
+    openState.home && minimizedState.home ? { key: "home" as WindowKey, label: "Home" } : null,
+    openState.work && minimizedState.work ? { key: "work" as WindowKey, label: "My Works" } : null,
+    openState.create && minimizedState.create ? { key: "create" as WindowKey, label: "Music" } : null,
+    openState.life && minimizedState.life ? { key: "life" as WindowKey, label: "Art" } : null,
+  ]
+    .filter((x): x is { key: WindowKey; label: string } => x !== null)
+    .map(({ key, label }) => ({ key, label, onRestore: () => restoreWindow(key) }));
+
+  const minimizedProjectChips = WORK_PROJECTS
+    .filter((p) => minimizedProjectState[p.id] && projectWindowState[p.id])
+    .map((p) => ({ key: p.id, label: p.title, onRestore: () => restoreProjectWindow(p.id) }));
+
   if (isMobile) {
     // Dating algorithms: full-screen with no nav bar
     if (mobileWorkProjectId === "p1") {
@@ -435,6 +485,22 @@ export function Desktop() {
                         </span>
                       ))}
                     </div>
+                  </div>
+                </div>
+                <div className="win98-outset bg-white p-3">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-[#6a5acd]">RPG Stats</p>
+                  <div className="mt-2 space-y-2">
+                    {mobileStats.map((stat) => (
+                      <div key={stat.label}>
+                        <div className="mb-1 flex items-center justify-between text-xs font-bold">
+                          <span>{stat.label}</span>
+                          <span>{stat.value}</span>
+                        </div>
+                        <div className="win98-inset h-4 bg-[#efefef] p-[2px]">
+                          <div className={`h-full ${stat.color}`} style={{ width: `${stat.value}%` }} />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </article>
@@ -676,7 +742,7 @@ export function Desktop() {
         >
           {homeLayout ? (
             <HomeWindow
-              isOpen={openState.home}
+              isOpen={openState.home && !minimizedState.home}
               zIndex={zIndex.home}
               defaultPosition={{ x: homeLayout.x, y: homeLayout.y }}
               defaultSize={{ width: homeLayout.width, height: homeLayout.height }}
@@ -686,12 +752,15 @@ export function Desktop() {
               }}
               onClose={() => closeWindow("home")}
               onFocus={() => focusWindow("home")}
+              onMinimize={() => minimizeWindow("home")}
+              onMaximize={() => toggleMaximizeWindow("home")}
+              isMaximized={maximizedState.home}
             />
           ) : null}
 
           <RetroWindow
             title="My Works"
-            isOpen={openState.work}
+            isOpen={openState.work && !minimizedState.work}
             zIndex={zIndex.work}
             gradientColors={["#FF1493", "#FF69B4"]}
             defaultPosition={{ x: 160, y: 80 }}
@@ -699,6 +768,9 @@ export function Desktop() {
             minSize={{ width: 460, height: 300 }}
             onClose={() => closeWindow("work")}
             onFocus={() => focusWindow("work")}
+            onMinimize={() => minimizeWindow("work")}
+            onMaximize={() => toggleMaximizeWindow("work")}
+            isMaximized={maximizedState.work}
           >
             <MyWorks onOpenProject={openProjectWindow} />
           </RetroWindow>
@@ -708,7 +780,7 @@ export function Desktop() {
               <FloatingCanvasWindow
                 key={project.id}
                 title={project.title}
-                isOpen={Boolean(projectWindowState[project.id])}
+                isOpen={Boolean(projectWindowState[project.id]) && !minimizedProjectState[project.id]}
                 zIndex={projectWindowZ[project.id] ?? 10}
                 defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
                 defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
@@ -717,6 +789,9 @@ export function Desktop() {
                 frameMode={projectWindowFrame[project.id] ?? "rounded"}
                 onClose={() => closeProjectWindow(project.id)}
                 onFocus={() => focusProjectWindow(project.id)}
+                onMinimize={() => minimizeProjectWindow(project.id)}
+                onMaximize={() => toggleMaximizeProjectWindow(project.id)}
+                isMaximized={Boolean(maximizedProjectState[project.id])}
               >
                 <DatingAlgorithmsPrototype
                   onSurfaceModeChange={(surfaceMode) =>
@@ -731,7 +806,7 @@ export function Desktop() {
               <FloatingCanvasWindow
                 key={project.id}
                 title={project.title}
-                isOpen={Boolean(projectWindowState[project.id])}
+                isOpen={Boolean(projectWindowState[project.id]) && !minimizedProjectState[project.id]}
                 zIndex={projectWindowZ[project.id] ?? 10}
                 defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
                 defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
@@ -740,6 +815,9 @@ export function Desktop() {
                 frameMode={projectWindowFrame[project.id] ?? "window"}
                 onClose={() => closeProjectWindow(project.id)}
                 onFocus={() => focusProjectWindow(project.id)}
+                onMinimize={() => minimizeProjectWindow(project.id)}
+                onMaximize={() => toggleMaximizeProjectWindow(project.id)}
+                isMaximized={Boolean(maximizedProjectState[project.id])}
               >
                 <AIModeratorsContent />
               </FloatingCanvasWindow>
@@ -747,7 +825,7 @@ export function Desktop() {
               <FloatingCanvasWindow
                 key={project.id}
                 title={project.title}
-                isOpen={Boolean(projectWindowState[project.id])}
+                isOpen={Boolean(projectWindowState[project.id]) && !minimizedProjectState[project.id]}
                 zIndex={projectWindowZ[project.id] ?? 10}
                 defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
                 defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
@@ -756,6 +834,9 @@ export function Desktop() {
                 frameMode={projectWindowFrame[project.id] ?? "window"}
                 onClose={() => closeProjectWindow(project.id)}
                 onFocus={() => focusProjectWindow(project.id)}
+                onMinimize={() => minimizeProjectWindow(project.id)}
+                onMaximize={() => toggleMaximizeProjectWindow(project.id)}
+                isMaximized={Boolean(maximizedProjectState[project.id])}
               >
                 <KoreanEmoticonsContent />
               </FloatingCanvasWindow>
@@ -779,23 +860,25 @@ export function Desktop() {
 
           <RetroWindow
             title="Music"
-            isOpen={openState.create}
+            isOpen={openState.create && !minimizedState.create}
             zIndex={zIndex.create}
             gradientColors={["#FF8C00", "#FFD700"]}
-            defaultPosition={{ x: 290, y: 180 }}
-            defaultSize={{ width: 780, height: 520 }}
+            defaultPosition={{ x: 180, y: 20 }}
+            defaultSize={{ width: 936, height: 624 }}
             minSize={{ width: 420, height: 300 }}
             noPadding
-            rounded
             onClose={() => closeWindow("create")}
             onFocus={() => focusWindow("create")}
+            onMinimize={() => minimizeWindow("create")}
+            onMaximize={() => toggleMaximizeWindow("create")}
+            isMaximized={maximizedState.create}
           >
             <CreateWindow />
           </RetroWindow>
 
           <RetroWindow
             title="Art"
-            isOpen={openState.life}
+            isOpen={openState.life && !minimizedState.life}
             zIndex={zIndex.life}
             gradientColors={["#87CEEB", "#98FF98"]}
             defaultPosition={{ x: 460, y: 120 }}
@@ -803,6 +886,9 @@ export function Desktop() {
             minSize={{ width: 280, height: 240 }}
             onClose={() => closeWindow("life")}
             onFocus={() => focusWindow("life")}
+            onMinimize={() => minimizeWindow("life")}
+            onMaximize={() => toggleMaximizeWindow("life")}
+            isMaximized={maximizedState.life}
           >
             <ul className="list-none space-y-1 p-0">
               <li>📝 Cooking</li>
@@ -812,7 +898,10 @@ export function Desktop() {
           </RetroWindow>
         </div>
 
-        <Taskbar onEmailClick={() => setEmailOpen(true)} />
+        <Taskbar
+          onEmailClick={() => setEmailOpen(true)}
+          minimizedWindows={[...minimizedWindowChips, ...minimizedProjectChips]}
+        />
       </div>
     </main>
   );

@@ -13,7 +13,7 @@ function Divider() {
 function GapPlot() {
   return (
     <div className="mt-5 overflow-hidden rounded-[10px] border border-[#e0dce8] bg-[#faf9fb]">
-      <svg viewBox="0 0 480 260" width="100%" style={{ display: "block" }}>
+      <svg viewBox="-42 0 564 260" width="100%" style={{ display: "block" }}>
         {/* axes */}
         <line x1="40" y1="130" x2="440" y2="130" stroke="#ddd8e4" strokeWidth="1" />
         <line x1="240" y1="20" x2="240" y2="245" stroke="#ddd8e4" strokeWidth="1" />
@@ -109,6 +109,32 @@ function ComplexTree() {
     { cx: 68,  cy: 200, hl: false }, // 30 A2b1a
     { cx: 183, cy: 200, hl: false }, // 31 C2a1a
     { cx: 68,  cy: 237, hl: false }, // 32 A2b1a1
+    { cx: 68,  cy: 274, hl: false }, // 33 A2b1a1a
+    { cx: 183, cy: 237, hl: false }, // 34 C2a1a1
+    { cx: 68,  cy: 311, hl: false }, // 35 A2b1a1a1
+    { cx: 183, cy: 274, hl: false }, // 36 C2a1a1a
+    { cx: 183, cy: 311, hl: false }, // 37 C2a1a1a1
+    // Level 9 (y=348)
+    { cx: 45,  cy: 348, hl: false }, // 38
+    { cx: 92,  cy: 348, hl: false }, // 39
+    { cx: 158, cy: 348, hl: false }, // 40
+    { cx: 205, cy: 348, hl: false }, // 41
+    // Level 10 (y=385)
+    { cx: 32,  cy: 385, hl: false }, // 42
+    { cx: 58,  cy: 385, hl: false }, // 43
+    { cx: 100, cy: 385, hl: false }, // 44
+    { cx: 148, cy: 385, hl: false }, // 45
+    { cx: 170, cy: 385, hl: false }, // 46
+    { cx: 200, cy: 385, hl: false }, // 47
+    // Level 11 (y=422)
+    { cx: 25,  cy: 422, hl: false }, // 48
+    { cx: 55,  cy: 422, hl: false }, // 49
+    { cx: 78,  cy: 422, hl: false }, // 50
+    { cx: 105, cy: 422, hl: false }, // 51
+    { cx: 140, cy: 422, hl: false }, // 52
+    { cx: 165, cy: 422, hl: false }, // 53
+    { cx: 193, cy: 422, hl: false }, // 54
+    { cx: 210, cy: 422, hl: false }, // 55
   ];
 
   const edges: [number, number][] = [
@@ -126,12 +152,19 @@ function ComplexTree() {
     [16,26],
     [17,27],[17,28],
     [20,29],[23,30],[29,31],[30,32],
+    [32,33],[31,34],[33,35],[34,36],[36,37],
+    // Level 9
+    [35,38],[35,39],[37,40],[37,41],
+    // Level 10
+    [38,42],[38,43],[39,44],[40,45],[40,46],[41,47],
+    // Level 11
+    [42,48],[43,49],[44,50],[44,51],[45,52],[46,53],[47,54],[47,55],
   ];
 
   return (
-    <svg viewBox="0 0 220 252" width="200" style={{ display: "block", flexShrink: 0 }}>
+    <svg viewBox="0 0 220 440" width="200" style={{ display: "block", flexShrink: 0 }}>
       {/* Highlight background around the Q1 sub-tree */}
-      <rect x="70" y="44" width="80" height="130" rx="5"
+      <rect x="83" y="46" width="52" height="86" rx="5"
         fill="#A29BFE08" stroke="#A29BFE" strokeWidth="1" strokeDasharray="4 2" />
 
       {edges.map(([fi, ti], i) => {
@@ -487,7 +520,7 @@ export function AIModeratorsContent() {
       <div>
         <SectionHeading>Large-Scale Qualitative Research</SectionHeading>
         <p className="text-sm leading-7 text-[#2f2f2f]">
-          AI moderators aren't here to mimic human empathy — they are here to process qualitative data at the speed of light. By utilizing LLM-based probing, we can now conduct <strong>"Shallow but Wide"</strong> qualitative research. This isn't just a better survey — it's a new data layer that captures the <em>Why</em> from 500+ participants simultaneously.
+          AI moderators aren't here to mimic human empathy; they are here to make qualitative data scalable. By utilizing LLM-based probing, we can now conduct <strong>"Shallow but Wide"</strong> qualitative research. This isn't just a better survey — it's a new data layer that captures the <em>Why</em> from 500+ participants simultaneously.
         </p>
         <p className="mt-4 text-sm leading-7 text-[#4b4550]">
           The moment a participant responds, the AI reads their answer and fires a personalised follow-up probe in real time — at any scale. Below are examples of how this plays out in practice:
@@ -504,7 +537,7 @@ export function AIModeratorsContent() {
           Through our extensive field experiments, we discovered that the AI moderator's effectiveness isn't a result of its "intelligence," but of the researcher's <strong>structural foresight</strong>. This marks a fundamental shift in the researcher's identity: from a conversationalist to an <strong>Architect of Logic</strong>.
         </p>
         <p className="mt-3 text-sm leading-7 text-[#4b4550]">
-          The future researcher doesn't just ask questions — they engineer the prompting strategy and guide how the AI should navigate the complexity of human response.
+          The future researcher doesn't just ask questions; they engineer the prompting strategy and guide how AI responds to different types of answers.
         </p>
         <ArchitectSection />
       </div>
