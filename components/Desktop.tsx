@@ -1,7 +1,7 @@
 "use client";
 
 import { FileText, Folder, LinkedinIcon, Mail, Music, Palette } from "lucide-react";
-import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { EmailComposeWindow } from "@/components/EmailComposeWindow";
 import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
 import { HomeWindow } from "@/components/HomeWindow";
@@ -17,12 +17,27 @@ type FolderKey = "work" | "create" | "life";
 type IconKey = "about" | FolderKey;
 type WindowKey = "home" | FolderKey;
 type MobileSectionKey = "about" | "work" | "music" | "artworks";
+type ArtworkImage = {
+  src: string;
+  alt?: string;
+  caption?: ReactNode;
+  chapterTitle?: string;
+  /** default: 기본 높이 · prominent: 메인 이미지 등 ~1.2배 · tall: diagram 등 더 큼 */
+  layout?: "default" | "tall" | "prominent";
+};
+type ArtworkGroup = {
+  id: string;
+  title: string;
+  detailTitle?: string;
+  thumbnail: string;
+  images: ArtworkImage[];
+};
 
 const desktopItems: Array<{ key: IconKey; label: string }> = [
   { key: "about", label: "About Me" },
   { key: "work", label: "Work" },
-  { key: "create", label: "Music" },
   { key: "life", label: "Art" },
+  { key: "create", label: "Music" },
 ];
 
 const initialZIndex: Record<WindowKey, number> = {
@@ -52,24 +67,214 @@ const stickerImages = [
 
 const INITIAL_STICKER_COUNT = 40;
 
-const ARTWORK_GROUPS = [
+const ARTWORK_GROUPS: ArtworkGroup[] = [
   {
-    id: "girl",
-    title: "Girl",
-    images: ["/create/drawing/Girl.jpg"],
+    id: "visualizing-social-problems-capitalism",
+    title: "Visualizing Social Problems - Capitalism",
+    detailTitle: "Visualizing Capitalism",
+    thumbnail: "/create/visualizing capitalism/대표이미지.png",
+    images: [
+      {
+        src: "/create/visualizing capitalism/대표이미지.png",
+        alt: "Representative image for Visualizing Social Problems - Capitalism",
+        chapterTitle: "Final Visualization",
+        caption: (
+          <>
+            I wanted to <strong>reflect Social problems in the form of architecture</strong>. Here,
+            I deisgned a speculative design form of a dystopian city. It is a paradoxical
+            demonstration of a problem of the society(Capitalism) in an architectural form.
+          </>
+        ),
+      },
+      {
+        src: "/create/visualizing capitalism/concept.png",
+        alt: "Concept image for Visualizing Social Problems - Capitalism",
+        chapterTitle: "Inspirations",
+        caption: (
+          <>
+            The vulnerable, who need temporary housing, parasitize and grow on the buildings of the
+            wealthy. It is the rich who waters and grows the poor, and when the gap becomes too big,{" "}
+            <strong>
+              the poor will have to paratize on the rich and eventually, the society can collapse.
+            </strong>
+          </>
+        ),
+      },
+      {
+        src: "/create/visualizing capitalism/inspiration1.png",
+        alt: "Inspiration 1 - Tower of Babel",
+        caption: "Tower of Babel",
+      },
+      {
+        src: "/create/visualizing capitalism/inspiration2.png",
+        alt: "Inspiration 2 - Movie Parasite",
+        caption: "Movie - Parasite",
+      },
+      {
+        src: "/create/visualizing capitalism/inspiration3.png",
+        alt: "Inspiration 3 - Kowloon Walled City",
+        caption: "Kowloon Walled City",
+      },
+      {
+        src: "/create/visualizing capitalism/mov.GIF",
+        alt: "Moving interaction capture for Visualizing Social Problems - Capitalism",
+        chapterTitle: "Interactive Image",
+        caption: "Interactive motion capture",
+      },
+      {
+        src: "/create/visualizing capitalism/exhibition1.jpg",
+        alt: "Exhibition documentation 1",
+        chapterTitle: "Exhibition",
+      },
+      {
+        src: "/create/visualizing capitalism/exhibition.jpg",
+        alt: "Exhibition documentation 2",
+      },
+    ],
+  },
+  {
+    id: "my-favorite-memory",
+    title: "My Favorite Memory",
+    detailTitle: "My Favorite Memory",
+    thumbnail: `/create/${encodeURIComponent("my fav memory")}/1.JPG`,
+    images: [
+      {
+        src: `/create/${encodeURIComponent("my fav memory")}/1.JPG`,
+        alt: "My favorite memory — main visualization",
+        layout: "prominent",
+        caption: (
+          <>
+            <p className="mb-3 last:mb-0">
+              This project translates one of my favorite childhood memories into a spatial experience:
+              playing with friends on the grass under a sprinkler.
+            </p>
+            <p className="mb-3 last:mb-0">
+              The streams of water are represented through the shadows cast by strings, while the
+              layered surface adds depth and playfulness.
+            </p>
+            <p>
+              The overall form evokes a spiderweb, symbolizing the friendships and connections that
+              emerged from this shared moment.
+            </p>
+          </>
+        ),
+      },
+      {
+        src: `/create/${encodeURIComponent("my fav memory")}/2.JPG`,
+        alt: "My favorite memory — image 2",
+      },
+      {
+        src: `/create/${encodeURIComponent("my fav memory")}/3.JPG`,
+        alt: "My favorite memory — image 3",
+      },
+      {
+        src: `/create/${encodeURIComponent("my fav memory")}/4.JPG`,
+        alt: "My favorite memory — study 4",
+        chapterTitle: "studies and sketches",
+      },
+      {
+        src: `/create/${encodeURIComponent("my fav memory")}/5.JPG`,
+        alt: "My favorite memory — study 5",
+      },
+      {
+        src: `/create/${encodeURIComponent("my fav memory")}/6.JPG`,
+        alt: "My favorite memory — study 6",
+      },
+    ],
+  },
+  {
+    id: "library-different-lighting-book-genres",
+    title: "Different lighting for Book Genres",
+    detailTitle: "Library with Different lighting for Book Genres",
+    thumbnail: "/create/library/section.png",
+    images: [
+      {
+        src: "/create/library/section.png",
+        alt: "Library with different lighting for book genres — section overview",
+        caption: (
+          <>
+            This library is designed to{" "}
+            <strong>
+              help readers feel more immersed in each book, with lighting tailored to different
+              genres.
+            </strong>{" "}
+            Take a quick tour through its various spaces.
+          </>
+        ),
+      },
+      {
+        src: "/create/library/diagram.png",
+        alt: "Library diagram",
+        chapterTitle: "Library Spaces",
+        caption: "Diagram",
+        layout: "tall",
+      },
+      {
+        src: `/create/library/${encodeURIComponent("mystery & thrillar books.png")}`,
+        alt: "Mystery and thriller books area",
+        caption: "Mystery & thriller books",
+      },
+      {
+        src: "/create/library/magazines.png",
+        alt: "Magazines area",
+        caption: "Magazines",
+      },
+      {
+        src: `/create/library/${encodeURIComponent("history books.png")}`,
+        alt: "History books area",
+        caption: "History books",
+      },
+      {
+        src: "/create/library/Novels.png",
+        alt: "Novels area",
+        caption: "Novels",
+      },
+    ],
   },
   {
     id: "nude-croquis",
     title: "Nude Croquis",
+    thumbnail: "/create/drawing/nude croquis 1.jpg",
     images: [
-      "/create/drawing/nude croquis 1.jpg",
-      "/create/drawing/nude croquis 2.jpg",
-      "/create/drawing/nude croquis 3.jpg",
-      "/create/drawing/nude croquis 4.jpg",
-      "/create/drawing/nude croquis 5.jpg",
+      { src: "/create/drawing/nude croquis 1.jpg" },
+      { src: "/create/drawing/nude croquis 2.jpg" },
+      { src: "/create/drawing/nude croquis 3.jpg" },
+      { src: "/create/drawing/nude croquis 4.jpg" },
+      { src: "/create/drawing/nude croquis 5.jpg" },
     ],
   },
+  {
+    id: "girl",
+    title: "Girl",
+    thumbnail: "/create/drawing/Girl.jpg",
+    images: [{ src: "/create/drawing/Girl.jpg" }],
+  },
 ];
+
+/** Art 목록 창 기본 위치·크기 — 작품 상세 창은 이 오른쪽에 붙여 배치 */
+const ART_BROWSER_WINDOW = {
+  defaultPosition: { x: 280, y: 120 },
+  defaultSize: { width: 600, height: 400 },
+} as const;
+
+/** 상세 뷰: 이미지가 세로로 창을 넘지 않도록 감싼 뒤 스케일 */
+const ARTWORK_DETAIL_IMG_WRAP_CLASS =
+  "flex w-full max-h-[min(54vmin,540px)] min-h-0 justify-center overflow-hidden";
+const ARTWORK_DETAIL_IMG_INNER_CLASS = "max-h-full w-auto max-w-full object-contain";
+
+const ARTWORK_DETAIL_IMG_WRAP_MOBILE_CLASS =
+  "flex w-full max-h-[min(48vmin,360px)] min-h-0 justify-center overflow-hidden";
+
+const ARTWORK_DETAIL_IMG_WRAP_TALL_CLASS =
+  "flex w-full max-h-[min(72vmin,780px)] min-h-0 justify-center overflow-hidden";
+const ARTWORK_DETAIL_IMG_WRAP_TALL_MOBILE_CLASS =
+  "flex w-full max-h-[min(62vmin,520px)] min-h-0 justify-center overflow-hidden";
+
+/** 기본 래퍼 대비 세로 약 1.2배 (메인 히어로 이미지) */
+const ARTWORK_DETAIL_IMG_WRAP_PROMINENT_CLASS =
+  "flex w-full max-h-[min(65vmin,648px)] min-h-0 justify-center overflow-hidden";
+const ARTWORK_DETAIL_IMG_WRAP_PROMINENT_MOBILE_CLASS =
+  "flex w-full max-h-[min(58vmin,432px)] min-h-0 justify-center overflow-hidden";
 
 const profileTags = [
   { label: "#HCI_Researcher", textColor: "#98FF98", bgColor: "#FF1493" },
@@ -130,11 +335,14 @@ export function Desktop() {
     {},
   );
   const [stickers, setStickers] = useState<Sticker[]>([]);
-  const [artworkLightbox, setArtworkLightbox] = useState<{ groupId: string; imgIndex: number } | null>(null);
+  const [selectedArtworkGroupId, setSelectedArtworkGroupId] = useState<string | null>(null);
+  const [artworkWindowLayout, setArtworkWindowLayout] = useState<ProjectWindowLayout | null>(null);
+  const [artworkWindowZ, setArtworkWindowZ] = useState(40);
+  const mobileArtworkDetailScrollRef = useRef<HTMLDivElement | null>(null);
+  const desktopArtworkDetailScrollRef = useRef<HTMLElement | null>(null);
   const hasSeededInitialStickers = useRef(false);
-  const artworkTouchStartX = useRef<number | null>(null);
-  const activeLightboxGroup = artworkLightbox
-    ? (ARTWORK_GROUPS.find((g) => g.id === artworkLightbox.groupId) ?? null)
+  const selectedArtworkGroup = selectedArtworkGroupId
+    ? (ARTWORK_GROUPS.find((g) => g.id === selectedArtworkGroupId) ?? null)
     : null;
   const [emailOpen, setEmailOpen] = useState(false);
   const [minimizedState, setMinimizedState] = useState<Record<WindowKey, boolean>>({
@@ -257,6 +465,55 @@ export function Desktop() {
     });
   };
 
+  const getArtworkDetailLayout = (): ProjectWindowLayout => {
+    const margin = 24;
+    const taskbarHeight = 40;
+    const desktopWidth = window.innerWidth / desktopScale;
+    const desktopHeight = (window.innerHeight - taskbarHeight) / desktopScale;
+
+    const artRight = ART_BROWSER_WINDOW.defaultPosition.x + ART_BROWSER_WINDOW.defaultSize.width;
+    const gap = -32;
+    const maxWRight = desktopWidth - margin - (artRight + gap);
+    const maxH = desktopHeight - margin * 2;
+    const rawSide = Math.min(maxWRight, maxH, 640);
+    const side = Math.max(360, Math.min(640, Math.floor(rawSide)));
+
+    let x = artRight + gap;
+    if (x + side > desktopWidth - margin) {
+      x = desktopWidth - margin - side;
+    }
+    x = Math.max(margin, x);
+
+    const y = Math.max(
+      margin,
+      Math.min(Math.round((desktopHeight - side) / 2), desktopHeight - side - margin),
+    );
+
+    return { x, y, width: side, height: side };
+  };
+
+  const openArtworkDetailWindow = (groupId: string) => {
+    setSelectedArtworkGroupId(groupId);
+    setArtworkWindowLayout(getArtworkDetailLayout());
+    setMaxZ((prev) => {
+      const next = prev + 1;
+      setArtworkWindowZ(next);
+      return next;
+    });
+  };
+
+  const closeArtworkDetailWindow = () => {
+    setSelectedArtworkGroupId(null);
+  };
+
+  const focusArtworkDetailWindow = () => {
+    setMaxZ((prev) => {
+      const next = prev + 1;
+      setArtworkWindowZ(next);
+      return next;
+    });
+  };
+
   const placeRandomSticker = (event: MouseEvent<HTMLElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const baseSize = 44 + Math.floor(Math.random() * 26);
@@ -348,6 +605,12 @@ export function Desktop() {
 
     setStickers(generated);
   }, []);
+
+  // 작품을 바꿔 열 때 이전 스크롤 위치를 유지하지 않도록 항상 맨 위로 이동
+  useEffect(() => {
+    mobileArtworkDetailScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    desktopArtworkDetailScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+  }, [selectedArtworkGroupId]);
 
   const renderMobileWorkContent = () => {
     if (!mobileWorkProjectId) {
@@ -470,8 +733,7 @@ export function Desktop() {
                   <p className="mt-2 text-sm leading-5">
                     With a background in interior architecture, I&apos;ve long been fascinated by how
                     physical environments shape human experience — a perspective I now bring to designing
-                    online interactions. Beyond the screen, I find balance in music, experimenting in the
-                    kitchen, and collecting moments from the world with curiosity.
+                    online interactions.
                   </p>
                   <div className="mt-3 border-t-2 border-[#c0c0c0] pt-3">
                     <div className="flex flex-wrap gap-2">
@@ -511,25 +773,82 @@ export function Desktop() {
                 <CreateWindow />
               </section>
             ) : (
-              <section className="grid grid-cols-2 gap-2">
-                {ARTWORK_GROUPS.map((group) => (
-                  <button
-                    key={group.id}
-                    type="button"
-                    onClick={() => setArtworkLightbox({ groupId: group.id, imgIndex: 0 })}
-                    className="win98-outset overflow-hidden bg-white text-left"
+              <section className="min-h-0">
+                {selectedArtworkGroup ? (
+                  <div
+                    ref={mobileArtworkDetailScrollRef}
+                    className="win98-outset max-h-[calc(100vh-160px)] overflow-y-auto bg-white p-3"
                   >
-                    <img
-                      src={group.images[0]}
-                      alt={group.title}
-                      className="h-40 w-full object-cover"
-                    />
-                    <p className="px-2 py-1.5 text-[11px] font-bold text-[#2d2d2d]">{group.title}</p>
-                    {group.images.length > 1 && (
-                      <p className="px-2 pb-1.5 text-[10px] text-[#888]">{group.images.length} images</p>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedArtworkGroupId(null)}
+                      className="win98-outset mb-3 bg-winGrey px-3 py-1 text-xs font-bold"
+                    >
+                      ← Back to Art
+                    </button>
+                    {selectedArtworkGroup.detailTitle ? (
+                      <h2 className="mb-3 text-lg font-black leading-6 text-[#2f2f2f]">
+                        {selectedArtworkGroup.detailTitle}
+                      </h2>
+                    ) : (
+                      <h3 className="mb-3 text-sm font-bold text-[#2f2f2f]">
+                        {selectedArtworkGroup.title}
+                      </h3>
                     )}
-                  </button>
-                ))}
+                    <div className="space-y-4">
+                      {selectedArtworkGroup.images.map((image, index) => (
+                        <div key={`${selectedArtworkGroup.id}-${index}`}>
+                          {image.chapterTitle ? (
+                            <h3 className="mb-2 text-[11px] font-black uppercase tracking-[0.12em] text-[#6a5acd]">
+                              {image.chapterTitle}
+                            </h3>
+                          ) : null}
+                          <article className="win98-inset bg-white p-2">
+                            <div
+                              className={
+                                image.layout === "tall"
+                                  ? ARTWORK_DETAIL_IMG_WRAP_TALL_MOBILE_CLASS
+                                  : image.layout === "prominent"
+                                    ? ARTWORK_DETAIL_IMG_WRAP_PROMINENT_MOBILE_CLASS
+                                    : ARTWORK_DETAIL_IMG_WRAP_MOBILE_CLASS
+                              }
+                            >
+                              <img
+                                src={image.src}
+                                alt={image.alt ?? `${selectedArtworkGroup.title} image ${index + 1}`}
+                                className={ARTWORK_DETAIL_IMG_INNER_CLASS}
+                              />
+                            </div>
+                            {image.caption ? (
+                              <p className="mt-2 text-xs leading-5 text-[#3a3a3a]">{image.caption}</p>
+                            ) : null}
+                          </article>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    {ARTWORK_GROUPS.map((group) => (
+                      <button
+                        key={group.id}
+                        type="button"
+                        onClick={() => setSelectedArtworkGroupId(group.id)}
+                        className="win98-outset overflow-hidden bg-white text-left"
+                      >
+                        <img
+                          src={group.thumbnail}
+                          alt={group.title}
+                          className="h-40 w-full object-cover"
+                        />
+                        <p className="px-2 py-1.5 text-[11px] font-bold text-[#2d2d2d]">{group.title}</p>
+                        {group.images.length > 1 && (
+                          <p className="px-2 pb-1.5 text-[10px] text-[#888]">{group.images.length} images</p>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </section>
             )}
           </div>
@@ -550,19 +869,19 @@ export function Desktop() {
             </button>
             <button
               type="button"
-              onClick={() => setMobileSection("music")}
-              className={`win98-outset flex flex-1 items-center justify-center gap-1 py-1 text-xs font-bold ${mobileSection === "music" ? "bg-[#ffd39f]" : "bg-[#efefef]"}`}
-            >
-              <Music size={12} />
-              Music
-            </button>
-            <button
-              type="button"
               onClick={() => setMobileSection("artworks")}
               className={`win98-outset flex flex-1 items-center justify-center gap-1 py-1 text-xs font-bold ${mobileSection === "artworks" ? "bg-[#c8f7d2]" : "bg-[#efefef]"}`}
             >
               <Palette size={12} />
               Art
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileSection("music")}
+              className={`win98-outset flex flex-1 items-center justify-center gap-1 py-1 text-xs font-bold ${mobileSection === "music" ? "bg-[#ffd39f]" : "bg-[#efefef]"}`}
+            >
+              <Music size={12} />
+              Music
             </button>
 
             <div className="mx-0.5 h-5 w-px bg-[#aaaaaa]" />
@@ -595,61 +914,6 @@ export function Desktop() {
             </a>
           </div>
         </nav>
-
-        {artworkLightbox && activeLightboxGroup && (
-          <div
-            className="fixed inset-0 z-[9999] flex flex-col bg-black/95"
-            onTouchStart={(e) => {
-              artworkTouchStartX.current = e.touches[0].clientX;
-            }}
-            onTouchEnd={(e) => {
-              if (artworkTouchStartX.current === null) return;
-              const dx = e.changedTouches[0].clientX - artworkTouchStartX.current;
-              artworkTouchStartX.current = null;
-              if (Math.abs(dx) < 40) return;
-              const next =
-                dx < 0
-                  ? Math.min(artworkLightbox.imgIndex + 1, activeLightboxGroup.images.length - 1)
-                  : Math.max(artworkLightbox.imgIndex - 1, 0);
-              setArtworkLightbox({ groupId: artworkLightbox.groupId, imgIndex: next });
-            }}
-          >
-            <div className="flex shrink-0 items-center justify-between px-4 py-4">
-              <p className="text-sm font-bold text-white">{activeLightboxGroup.title}</p>
-              {activeLightboxGroup.images.length > 1 && (
-                <p className="text-xs text-white/60">
-                  {artworkLightbox.imgIndex + 1} / {activeLightboxGroup.images.length}
-                </p>
-              )}
-              <button
-                type="button"
-                onClick={() => setArtworkLightbox(null)}
-                className="rounded-full bg-white/15 px-3 py-1 text-sm font-bold text-white"
-              >
-                Close
-              </button>
-            </div>
-            <div className="flex flex-1 min-h-0 items-center justify-center px-4 pb-4">
-              <img
-                src={activeLightboxGroup.images[artworkLightbox.imgIndex]}
-                alt={activeLightboxGroup.title}
-                className="max-h-full max-w-full object-contain"
-              />
-            </div>
-            {activeLightboxGroup.images.length > 1 && (
-              <div className="flex shrink-0 justify-center gap-2 pb-6">
-                {activeLightboxGroup.images.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setArtworkLightbox({ groupId: artworkLightbox.groupId, imgIndex: i })}
-                    className={`h-2 w-2 rounded-full transition ${i === artworkLightbox.imgIndex ? "bg-white" : "bg-white/30"}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </main>
     );
   }
@@ -881,21 +1145,97 @@ export function Desktop() {
             isOpen={openState.life && !minimizedState.life}
             zIndex={zIndex.life}
             gradientColors={["#87CEEB", "#98FF98"]}
-            defaultPosition={{ x: 460, y: 120 }}
-            defaultSize={{ width: 600, height: 400 }}
+            defaultPosition={ART_BROWSER_WINDOW.defaultPosition}
+            defaultSize={ART_BROWSER_WINDOW.defaultSize}
             minSize={{ width: 280, height: 240 }}
-            onClose={() => closeWindow("life")}
+            onClose={() => {
+              closeWindow("life");
+              closeArtworkDetailWindow();
+            }}
             onFocus={() => focusWindow("life")}
             onMinimize={() => minimizeWindow("life")}
             onMaximize={() => toggleMaximizeWindow("life")}
             isMaximized={maximizedState.life}
           >
-            <ul className="list-none space-y-1 p-0">
-              <li>📝 Cooking</li>
-              <li>📝 Travel</li>
-              <li>📝 Diary</li>
-            </ul>
+            <section className="h-full min-h-0 overflow-y-auto bg-white p-3">
+              <div className="grid grid-cols-2 gap-3">
+                {ARTWORK_GROUPS.map((group) => (
+                  <button
+                    key={group.id}
+                    type="button"
+                    onClick={() => openArtworkDetailWindow(group.id)}
+                    className="win98-outset overflow-hidden bg-white text-left"
+                  >
+                    <img
+                      src={group.thumbnail}
+                      alt={group.title}
+                      className="h-40 w-full object-cover"
+                    />
+                    <p className="px-2 py-1.5 text-[11px] font-bold text-[#2d2d2d]">{group.title}</p>
+                    {group.images.length > 1 && (
+                      <p className="px-2 pb-1.5 text-[10px] text-[#888]">{group.images.length} images</p>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </section>
           </RetroWindow>
+
+          {selectedArtworkGroup ? (
+            <RetroWindow
+              title={selectedArtworkGroup.title}
+              isOpen={openState.life && Boolean(selectedArtworkGroup)}
+              zIndex={artworkWindowZ}
+              gradientColors={["#87CEEB", "#98FF98"]}
+              defaultPosition={artworkWindowLayout ?? { x: 848, y: 96 }}
+              defaultSize={artworkWindowLayout ?? { width: 640, height: 640 }}
+              minSize={{ width: 400, height: 400 }}
+              onClose={closeArtworkDetailWindow}
+              onFocus={focusArtworkDetailWindow}
+            >
+              <section
+                ref={desktopArtworkDetailScrollRef}
+                className="h-full min-h-0 overflow-y-auto bg-white px-3 pb-4 pt-2"
+              >
+                {selectedArtworkGroup.detailTitle ? (
+                  <h2 className="mb-3 px-1 text-2xl font-black leading-8 text-[#2f2f2f]">
+                    {selectedArtworkGroup.detailTitle}
+                  </h2>
+                ) : null}
+                <div className="space-y-4">
+                  {selectedArtworkGroup.images.map((image, index) => (
+                    <div key={`${selectedArtworkGroup.id}-${index}`}>
+                      {image.chapterTitle ? (
+                        <h3 className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#6a5acd]">
+                          {image.chapterTitle}
+                        </h3>
+                      ) : null}
+                      <article className="win98-inset bg-white p-2">
+                        <div
+                          className={
+                            image.layout === "tall"
+                              ? ARTWORK_DETAIL_IMG_WRAP_TALL_CLASS
+                              : image.layout === "prominent"
+                                ? ARTWORK_DETAIL_IMG_WRAP_PROMINENT_CLASS
+                                : ARTWORK_DETAIL_IMG_WRAP_CLASS
+                          }
+                        >
+                          <img
+                            src={image.src}
+                            alt={image.alt ?? `${selectedArtworkGroup.title} image ${index + 1}`}
+                            className={ARTWORK_DETAIL_IMG_INNER_CLASS}
+                          />
+                        </div>
+                        {image.caption ? (
+                          <p className="mt-3 text-sm leading-7 text-[#3a3a3a]">{image.caption}</p>
+                        ) : null}
+                      </article>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </RetroWindow>
+          ) : null}
         </div>
 
         <Taskbar

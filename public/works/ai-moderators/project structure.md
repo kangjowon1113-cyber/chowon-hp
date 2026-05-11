@@ -29,7 +29,7 @@ This gap is where the most critical user insights are lost. While AI moderators 
 ## Chapter 2. Large-Scale Qualitative Research
 
 ### [Content]
-AI moderators aren't here to mimic human empathy; they are here to process qualitative data at the speed of light.
+AI moderators aren't here to mimic human empathy; they are here to make qualitative data scalable.
 By utilizing LLM-based probing, we can now conduct **"Shallow but Wide"** qualitative research. This isn't just a better survey—it’s a new data layer that captures the "Why" from 500+ participants simultaneously.
 
 ### [Visualization: The Live Data Waterfall]
@@ -42,9 +42,9 @@ By utilizing LLM-based probing, we can now conduct **"Shallow but Wide"** qualit
 ## Chapter 3. From Interviewer to Architect
 
 ### [Content]
-Through our extensive field experiments, we discovered that the AI moderator's effectiveness isn't a result of its "intelligence," but of the researcher's **structural foresight**. This marks a fundamental shift in the researcher's identity: from a conversationalist to an **Architect of Logic.**
+Through our extensive field experiments, we discovered that the AI moderator's effectiveness isn't a result of its "intelligence," but of the researcher's **structural foresight**. This marks a fundamental shift in the researcher's identity to an **Architect of Logic.**
 
-The future researcher doesn't just ask questions; they engineer the prompting strategy and guide how the AI should navigate the complexity of human response.
+The future researcher doesn't just ask questions; they engineer the prompting strategy and guide how AI responds to different types of answers.
 
 - **Codifying Intuition (Checklists)**: We found that defining a "Master Checklist" is essential. It acts as the AI's anchor, ensuring it never drifts from the research intent and covers all mandatory topics, regardless of how the conversation flows.
 
