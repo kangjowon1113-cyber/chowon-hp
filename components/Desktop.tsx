@@ -550,6 +550,7 @@ export function Desktop() {
     }
     setMobileSection("about");
     setMobileWorkProjectId(null);
+    setSelectedArtworkGroupId(null);
   }, [isMobile]);
 
   useEffect(() => {
@@ -699,20 +700,6 @@ export function Desktop() {
         <EmailComposeWindow isOpen={emailOpen} zIndex={9999} onClose={() => setEmailOpen(false)} />
         <section className="h-full overflow-hidden pb-[56px]">
           <div className="h-full overflow-y-auto px-3 pb-4 pt-3">
-            {mobileSection !== "about" && !mobileWorkProjectId ? (
-              <div className="mb-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileSection("about");
-                    setMobileWorkProjectId(null);
-                  }}
-                  className="win98-outset bg-white px-3 py-1 text-xs font-bold"
-                >
-                  ← About Me
-                </button>
-              </div>
-            ) : null}
             {mobileSection === "about" ? (
               <article className="mx-auto max-w-xl space-y-3">
                 <div className="win98-outset overflow-hidden bg-[#ece6ff]">
@@ -775,58 +762,60 @@ export function Desktop() {
             ) : (
               <section className="min-h-0">
                 {selectedArtworkGroup ? (
-                  <div
-                    ref={mobileArtworkDetailScrollRef}
-                    className="win98-outset max-h-[calc(100vh-160px)] overflow-y-auto bg-white p-3"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setSelectedArtworkGroupId(null)}
-                      className="win98-outset mb-3 bg-winGrey px-3 py-1 text-xs font-bold"
-                    >
-                      ← Back to Art
-                    </button>
-                    {selectedArtworkGroup.detailTitle ? (
-                      <h2 className="mb-3 text-lg font-black leading-6 text-[#2f2f2f]">
-                        {selectedArtworkGroup.detailTitle}
-                      </h2>
-                    ) : (
-                      <h3 className="mb-3 text-sm font-bold text-[#2f2f2f]">
-                        {selectedArtworkGroup.title}
-                      </h3>
-                    )}
-                    <div className="space-y-4">
-                      {selectedArtworkGroup.images.map((image, index) => (
-                        <div key={`${selectedArtworkGroup.id}-${index}`}>
-                          {image.chapterTitle ? (
-                            <h3 className="mb-2 text-[11px] font-black uppercase tracking-[0.12em] text-[#6a5acd]">
-                              {image.chapterTitle}
-                            </h3>
-                          ) : null}
-                          <article className="win98-inset bg-white p-2">
-                            <div
-                              className={
-                                image.layout === "tall"
-                                  ? ARTWORK_DETAIL_IMG_WRAP_TALL_MOBILE_CLASS
-                                  : image.layout === "prominent"
-                                    ? ARTWORK_DETAIL_IMG_WRAP_PROMINENT_MOBILE_CLASS
-                                    : ARTWORK_DETAIL_IMG_WRAP_MOBILE_CLASS
-                              }
-                            >
-                              <img
-                                src={image.src}
-                                alt={image.alt ?? `${selectedArtworkGroup.title} image ${index + 1}`}
-                                className={ARTWORK_DETAIL_IMG_INNER_CLASS}
-                              />
-                            </div>
-                            {image.caption ? (
-                              <p className="mt-2 text-xs leading-5 text-[#3a3a3a]">{image.caption}</p>
-                            ) : null}
-                          </article>
-                        </div>
-                      ))}
+                  <section className="flex h-full min-h-0 flex-col">
+                    <div className="mb-2 border-b border-black/15 pb-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedArtworkGroupId(null)}
+                        className="win98-outset bg-winGrey px-3 py-1 text-xs font-bold"
+                      >
+                        ← Back
+                      </button>
                     </div>
-                  </div>
+                    <div
+                      ref={mobileArtworkDetailScrollRef}
+                      className="min-h-0 flex-1 overflow-y-auto rounded border border-black/20 bg-white p-3"
+                    >
+                      {selectedArtworkGroup.detailTitle ? (
+                        <h2 className="mb-3 text-lg font-black leading-6 text-[#2f2f2f]">
+                          {selectedArtworkGroup.detailTitle}
+                        </h2>
+                      ) : (
+                        <h3 className="mb-3 text-sm font-bold text-[#2f2f2f]">{selectedArtworkGroup.title}</h3>
+                      )}
+                      <div className="space-y-4">
+                        {selectedArtworkGroup.images.map((image, index) => (
+                          <div key={`${selectedArtworkGroup.id}-${index}`}>
+                            {image.chapterTitle ? (
+                              <h3 className="mb-2 text-[11px] font-black uppercase tracking-[0.12em] text-[#6a5acd]">
+                                {image.chapterTitle}
+                              </h3>
+                            ) : null}
+                            <article className="win98-inset bg-white p-2">
+                              <div
+                                className={
+                                  image.layout === "tall"
+                                    ? ARTWORK_DETAIL_IMG_WRAP_TALL_MOBILE_CLASS
+                                    : image.layout === "prominent"
+                                      ? ARTWORK_DETAIL_IMG_WRAP_PROMINENT_MOBILE_CLASS
+                                      : ARTWORK_DETAIL_IMG_WRAP_MOBILE_CLASS
+                                }
+                              >
+                                <img
+                                  src={image.src}
+                                  alt={image.alt ?? `${selectedArtworkGroup.title} image ${index + 1}`}
+                                  className={ARTWORK_DETAIL_IMG_INNER_CLASS}
+                                />
+                              </div>
+                              {image.caption ? (
+                                <p className="mt-2 text-xs leading-5 text-[#3a3a3a]">{image.caption}</p>
+                              ) : null}
+                            </article>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
                     {ARTWORK_GROUPS.map((group) => (
