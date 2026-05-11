@@ -641,19 +641,8 @@ export function Desktop() {
       );
     }
 
-    const selectedProject = WORK_PROJECTS.find((project) => project.id === mobileWorkProjectId);
-
     return (
       <section className="flex h-full min-h-0 flex-col">
-        <div className="mb-2 border-b border-black/15 pb-2">
-          <button
-            type="button"
-            onClick={() => setMobileWorkProjectId(null)}
-            className="win98-outset bg-winGrey px-3 py-1 text-xs font-bold"
-          >
-            ← Back
-          </button>
-        </div>
         <div className="min-h-0 flex-1 overflow-auto rounded border border-black/20 bg-white">
           {mobileWorkProjectId === "p1" ? (
             <DatingAlgorithmsPrototype />
@@ -700,6 +689,29 @@ export function Desktop() {
         <EmailComposeWindow isOpen={emailOpen} zIndex={9999} onClose={() => setEmailOpen(false)} />
         <section className="h-full overflow-hidden pb-[56px]">
           <div className="h-full overflow-y-auto px-3 pb-4 pt-3">
+            {mobileSection !== "about" ? (
+              <div className="mb-2 border-b border-black/15 pb-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (mobileSection === "work" && mobileWorkProjectId) {
+                      setMobileWorkProjectId(null);
+                      return;
+                    }
+                    if (mobileSection === "artworks" && selectedArtworkGroupId) {
+                      setSelectedArtworkGroupId(null);
+                      return;
+                    }
+                    setMobileSection("about");
+                    setMobileWorkProjectId(null);
+                    setSelectedArtworkGroupId(null);
+                  }}
+                  className="win98-outset bg-white px-3 py-1 text-xs font-bold"
+                >
+                  ← Back
+                </button>
+              </div>
+            ) : null}
             {mobileSection === "about" ? (
               <article className="mx-auto max-w-xl space-y-3">
                 <div className="win98-outset overflow-hidden bg-[#ece6ff]">
@@ -763,15 +775,6 @@ export function Desktop() {
               <section className="min-h-0">
                 {selectedArtworkGroup ? (
                   <section className="flex h-full min-h-0 flex-col">
-                    <div className="mb-2 border-b border-black/15 pb-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedArtworkGroupId(null)}
-                        className="win98-outset bg-winGrey px-3 py-1 text-xs font-bold"
-                      >
-                        ← Back
-                      </button>
-                    </div>
                     <div
                       ref={mobileArtworkDetailScrollRef}
                       className="min-h-0 flex-1 overflow-y-auto rounded border border-black/20 bg-white p-3"
