@@ -6,7 +6,8 @@ import { EmailComposeWindow } from "@/components/EmailComposeWindow";
 import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
 import { HomeWindow } from "@/components/HomeWindow";
 import { MyWorks, WORK_PROJECTS } from "@/components/MyWorks";
-import { Publications } from "@/components/Publications";
+import { Publications, type Publication } from "@/components/Publications";
+import { PublicationPdfWindow } from "@/components/PublicationPdfWindow";
 import { ResearchListCard } from "@/components/ResearchListCard";
 import { RetroWindow } from "@/components/RetroWindow";
 import { Taskbar } from "@/components/Taskbar";
@@ -326,6 +327,9 @@ export function Desktop() {
   const [zIndex, setZIndex] = useState(initialZIndex);
   const [maxZ, setMaxZ] = useState(30);
   const [selectedIcon, setSelectedIcon] = useState<IconKey | null>(null);
+  const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
+  const [publicationPdfMinimized, setPublicationPdfMinimized] = useState(false);
+  const [publicationPdfZ, setPublicationPdfZ] = useState(30);
   const [homeLayout, setHomeLayout] = useState<{
     x: number;
     y: number;
@@ -387,6 +391,20 @@ export function Desktop() {
 
   const closeWindow = (key: WindowKey) => {
     setOpenState((prev) => ({ ...prev, [key]: false }));
+  };
+
+  const focusPublicationPdf = () => {
+    setMaxZ((prev) => {
+      const next = prev + 1;
+      setPublicationPdfZ(next);
+      return next;
+    });
+  };
+
+  const openPublicationPdf = (publication: Publication) => {
+    setSelectedPublication(publication);
+    setPublicationPdfMinimized(false);
+    focusPublicationPdf();
   };
 
   const focusWindow = (key: WindowKey) => {
@@ -1069,8 +1087,19 @@ export function Desktop() {
             onMaximize={() => toggleMaximizeWindow("publications")}
             isMaximized={maximizedState.publications}
           >
-            <Publications />
+            <Publications onOpenPublication={openPublicationPdf} />
           </RetroWindow>
+
+          <PublicationPdfWindow
+            publication={selectedPublication}
+            desktopScale={desktopScale}
+            gradientColors={publicationsWindowGradient}
+            zIndex={publicationPdfZ}
+            minimized={publicationPdfMinimized}
+            onClose={() => setSelectedPublication(null)}
+            onFocus={focusPublicationPdf}
+            onMinimize={() => setPublicationPdfMinimized(true)}
+          />
 
           {WORK_PROJECTS.map((project, index) =>
             project.id === "p1" ? (
@@ -1273,7 +1302,18 @@ export function Desktop() {
 
         <Taskbar
           onEmailClick={() => setEmailOpen(true)}
-          minimizedWindows={[...minimizedWindowChips, ...minimizedProjectChips]}
+          minimizedWindows={[
+            ...minimizedWindowChips,
+            ...minimizedProjectChips,
+            ...(selectedPublication && publicationPdfMinimized ? [{
+              key: "publication-pdf",
+              label: `PDF · ${selectedPublication.venue}`,
+              onRestore: () => {
+                setPublicationPdfMinimized(false);
+                focusPublicationPdf();
+              },
+            }] : []),
+          ]}
         />
       </div>
     </main>
