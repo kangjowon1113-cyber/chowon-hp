@@ -584,8 +584,9 @@ export function Desktop() {
     }
 
     hasSeededInitialStickers.current = true;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    // Generate positions in the unscaled desktop's coordinate space.
+    const desktopWidth = window.innerWidth / desktopScale;
+    const desktopHeight = window.innerHeight / desktopScale;
     const generated: Sticker[] = [];
     const maxAttempts = INITIAL_STICKER_COUNT * 40;
 
@@ -595,8 +596,8 @@ export function Desktop() {
       const src = stickerImages[Math.floor(Math.random() * stickerImages.length)];
       const baseSize = 44 + Math.floor(Math.random() * 26);
       const size = getStickerSize(src, baseSize);
-      const x = size / 2 + Math.random() * Math.max(1, vw - size);
-      const y = size / 2 + Math.random() * Math.max(1, vh - size);
+      const x = size / 2 + Math.random() * Math.max(1, desktopWidth - size);
+      const y = size / 2 + Math.random() * Math.max(1, desktopHeight - size);
 
       const collidesTooMuch = generated.some((sticker) => {
         const dx = sticker.x - x;

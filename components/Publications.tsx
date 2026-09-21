@@ -28,11 +28,6 @@ const publications = [
 export function Publications({ mobile = false }: { mobile?: boolean }) {
   return (
     <section className={`flex min-h-0 flex-col font-system98 text-[#1b1b1b] ${mobile ? "" : "h-full bg-white"}`}>
-      {!mobile && (
-        <div className="win98-inset mb-2 bg-white px-2 py-1 text-[11px] font-bold text-[#4a4a7a]">
-          Home &gt; Publications
-        </div>
-      )}
       <div className={`retro-scrollbar min-h-0 flex-1 overflow-y-auto ${mobile ? "" : "bg-white p-1"}`}>
         {publications.map((publication) => (
           <ResearchListCard

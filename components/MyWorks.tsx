@@ -49,10 +49,6 @@ type MyWorksProps = {
 export function MyWorks({ onOpenProject }: MyWorksProps) {
   return (
     <section className="flex h-full min-h-0 flex-col bg-white font-system98 text-[#1b1b1b]">
-      <div className="win98-inset mb-2 bg-white px-2 py-1 text-[11px] font-bold text-[#4a4a7a]">
-        Home &gt; My Works &gt; UX_Research
-      </div>
-
       <div className="retro-scrollbar min-h-0 flex-1 overflow-y-auto bg-white p-1">
         {WORK_PROJECTS.map((project) => (
           <ResearchListCard
