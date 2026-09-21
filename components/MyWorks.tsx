@@ -1,5 +1,7 @@
 "use client";
 
+import { ResearchListCard } from "@/components/ResearchListCard";
+
 type ProjectItem = {
   id: string;
   title: string;
@@ -10,18 +12,18 @@ type ProjectItem = {
 
 export const WORK_PROJECTS: ProjectItem[] = [
   {
-    id: "p1",
-    title: "Debugging Dating Algorithms: How can we find true love?",
-    type: "HCI RESEARCH",
-    status: "PUBLISHED(1st Author)",
-    summary: "The reliability of online dating algorithms has sparked considerable debate...",
-  },
-  {
     id: "p2",
     title: "AI moderators: Redefining Research through Large-Scale Qualitative AI Moderation",
     type: "Current Business",
     status: "In Progress",
     summary: "AI moderators are the new interviewers for the future...",
+  },
+  {
+    id: "p1",
+    title: "Debugging Dating Algorithms: How can we find true love?",
+    type: "HCI RESEARCH",
+    status: "PUBLISHED(1st Author)",
+    summary: "The reliability of online dating algorithms has sparked considerable debate...",
   },
   {
     id: "p3",
@@ -40,9 +42,6 @@ export const WORK_PROJECTS: ProjectItem[] = [
   },
 ];
 
-const unifiedTagColor = "#FF1493";
-const unifiedTagTextColor = "#98FF98";
-
 type MyWorksProps = {
   onOpenProject: (projectId: string) => void;
 };
@@ -56,42 +55,16 @@ export function MyWorks({ onOpenProject }: MyWorksProps) {
 
       <div className="retro-scrollbar min-h-0 flex-1 overflow-y-auto bg-white p-1">
         {WORK_PROJECTS.map((project) => (
-          <button
+          <ResearchListCard
             key={project.id}
-            type="button"
             onClick={() => onOpenProject(project.id)}
-            className="win98-outset mb-2 block w-full border border-[#777] bg-white p-2 text-left last:mb-0 active:translate-x-px active:translate-y-px"
-            style={{ borderColor: "#c6c6c6 #777 #777 #c6c6c6" }}
-          >
-            <div className="flex items-start gap-2">
-              <span className="mt-0.5 text-lg leading-none" aria-hidden="true">
-                💾
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6a5acd]">
-                  {project.type}
-                </p>
-                <h3 className="mt-1 text-[17px] font-bold leading-5 text-[#2f2f2f]">{project.title}</h3>
-                <p className="mt-1 text-[12px] leading-4 text-[#303030]">{project.summary}</p>
-                <span
-                  className="mt-2 inline-block px-2 py-[2px] text-[11px] font-bold uppercase tracking-[0.06em]"
-                  style={{
-                    backgroundColor: unifiedTagColor,
-                    color: unifiedTagTextColor,
-                    borderTop: "2px solid white",
-                    borderLeft: "2px solid white",
-                    borderRight: "2px solid #555",
-                    borderBottom: "2px solid #555",
-                  }}
-                >
-                  {project.status}
-                </span>
-              </div>
-            </div>
-          </button>
+            eyebrow={project.type}
+            title={project.title}
+            description={project.summary}
+            badge={project.status}
+          />
         ))}
       </div>
     </section>
   );
 }
-
