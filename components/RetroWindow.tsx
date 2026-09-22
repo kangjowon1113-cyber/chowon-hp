@@ -18,6 +18,8 @@ type RetroWindowProps = {
   onMinimize?: () => void;
   onMaximize?: () => void;
   isMaximized?: boolean;
+  maximizedBottomInset?: number;
+  scale?: number;
   children?: ReactNode;
 };
 
@@ -36,6 +38,8 @@ export function RetroWindow({
   onMinimize,
   onMaximize,
   isMaximized = false,
+  maximizedBottomInset = 0,
+  scale = 1,
   children,
 }: RetroWindowProps) {
   if (!isOpen) return null;
@@ -99,7 +103,7 @@ export function RetroWindow({
 
   if (isMaximized) {
     return (
-      <div className="absolute inset-0" style={{ zIndex }}>
+      <div className="absolute inset-0" style={{ zIndex, bottom: maximizedBottomInset }}>
         {windowContent}
       </div>
     );
@@ -107,6 +111,7 @@ export function RetroWindow({
 
   return (
     <Rnd
+      scale={scale}
       className="retro-rnd absolute"
       style={{ zIndex }}
       bounds="parent"

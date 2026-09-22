@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { RetroWindow } from "@/components/RetroWindow";
 
 type HomeWindowProps = {
@@ -16,18 +15,10 @@ type HomeWindowProps = {
   isMaximized?: boolean;
 };
 
-type PhotoItem = {
-  id: string;
-  title: string;
-  label: string;
-  src: string;
+const mainPhoto = {
+  title: "Photo 01",
+  src: "/home/1_PC.jpg",
 };
-
-const photoItems: PhotoItem[] = [
-  { id: "p1", title: "Photo 01", label: "001_image", src: "/home/1_PC.jpg" },
-  { id: "p2", title: "Photo 02", label: "002_image", src: "/home/2_PC.jpg" },
-  { id: "p3", title: "Photo 03", label: "003_image", src: "/home/3.jpg" },
-];
 
 const stats = [
   { label: "User Insight", value: 92, color: "bg-[#7b68ee]" },
@@ -57,13 +48,6 @@ export function HomeWindow({
   onMaximize,
   isMaximized,
 }: HomeWindowProps) {
-  const [selectedPhotoId, setSelectedPhotoId] = useState(photoItems[0].id);
-
-  const selectedPhoto = useMemo(
-    () => photoItems.find((photo) => photo.id === selectedPhotoId) ?? photoItems[0],
-    [selectedPhotoId]
-  );
-
   return (
     <RetroWindow
       title="Home"
@@ -80,46 +64,13 @@ export function HomeWindow({
       isMaximized={isMaximized}
     >
       <div className="grid h-full min-h-0 grid-cols-2 gap-3">
-        <section className="win98-inset grid min-h-0 h-full grid-cols-[130px_1fr] gap-2 bg-[#f5f8ff] p-2">
-          <div className="win98-inset flex flex-col gap-2 bg-white p-2">
-            {photoItems.map((photo) => (
-              <button
-                key={photo.id}
-                type="button"
-                onClick={() => setSelectedPhotoId(photo.id)}
-                className={`h-[168px] w-full appearance-none overflow-hidden bg-transparent p-0 ${
-                  selectedPhotoId === photo.id
-                    ? "ring-2 ring-[#2f80ed]/50"
-                    : ""
-                }`}
-              >
-                <div className="flex h-full flex-col">
-                  <img
-                    src={photo.src}
-                    alt={photo.title}
-                    className="h-[144px] w-full object-cover"
-                    loading="lazy"
-                  />
-                  <p className="mt-1 text-center text-[12px] font-bold tracking-wide text-[#2d2d2d]">
-                    {photo.label}
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
-
+        <section className="win98-inset min-h-0 h-full bg-[#f5f8ff] p-2">
           <div className="win98-inset relative h-full overflow-hidden bg-[#c7c7cc]">
             <img
-              src={selectedPhoto.src}
-              alt={selectedPhoto.title}
+              src={mainPhoto.src}
+              alt={mainPhoto.title}
               className="h-full w-full object-cover"
             />
-            <div className="absolute left-3 top-3 bg-white/80 px-2 py-1 text-[11px] font-bold tracking-wide">
-              {selectedPhoto.title}
-            </div>
-            <div className="absolute bottom-3 right-3 bg-black/50 px-2 py-1 text-xs text-white">
-              Main Preview
-            </div>
           </div>
         </section>
 
@@ -154,8 +105,7 @@ export function HomeWindow({
           </article>
 
           <article className="win98-inset min-h-0 overflow-y-auto bg-white p-3">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#6a5acd]">RPG Stats</p>
-            <div className="mt-3 space-y-3">
+            <div className="space-y-3">
               {stats.map((stat) => (
                 <div key={stat.label}>
                   <div className="mb-1 flex items-center justify-between text-xs font-bold">
@@ -174,4 +124,3 @@ export function HomeWindow({
     </RetroWindow>
   );
 }
-

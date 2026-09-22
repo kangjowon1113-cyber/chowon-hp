@@ -1,11 +1,14 @@
 "use client";
 
-import { FileText, Folder, LinkedinIcon, Mail, Music, Palette } from "lucide-react";
+import { BookOpen, FileText, Folder, LinkedinIcon, Mail, Music, Palette } from "lucide-react";
 import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { EmailComposeWindow } from "@/components/EmailComposeWindow";
 import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
 import { HomeWindow } from "@/components/HomeWindow";
 import { MyWorks, WORK_PROJECTS } from "@/components/MyWorks";
+import { Publications, type Publication } from "@/components/Publications";
+import { PublicationPdfWindow } from "@/components/PublicationPdfWindow";
+import { ResearchListCard } from "@/components/ResearchListCard";
 import { RetroWindow } from "@/components/RetroWindow";
 import { Taskbar } from "@/components/Taskbar";
 import { CreateWindow } from "@/components/CreateWindow";
@@ -13,10 +16,10 @@ import { DatingAlgorithmsPrototype } from "@/components/works/debugging-dating-a
 import { AIModeratorsContent } from "@/components/works/ai-moderators/AIModeratorsContent";
 import { KoreanEmoticonsContent } from "@/components/works/understanding-korean-emoticons/KoreanEmoticonsContent";
 
-type FolderKey = "work" | "create" | "life";
+type FolderKey = "work" | "publications" | "create" | "life";
 type IconKey = "about" | FolderKey;
 type WindowKey = "home" | FolderKey;
-type MobileSectionKey = "about" | "work" | "music" | "artworks";
+type MobileSectionKey = "about" | "work" | "publications" | "music" | "artworks";
 type ArtworkImage = {
   src: string;
   alt?: string;
@@ -36,13 +39,19 @@ type ArtworkGroup = {
 const desktopItems: Array<{ key: IconKey; label: string }> = [
   { key: "about", label: "About Me" },
   { key: "work", label: "Work" },
+  { key: "publications", label: "Publications" },
   { key: "life", label: "Art" },
   { key: "create", label: "Music" },
 ];
 
+// Primary and accent colors from design-system.md, paired by window like Music and Art.
+const workWindowGradient: [string, string] = ["#FF79C6", "#A29BFE"];
+const publicationsWindowGradient: [string, string] = ["#000080", "#A29BFE"];
+
 const initialZIndex: Record<WindowKey, number> = {
   home: 24,
   work: 20,
+  publications: 23,
   create: 21,
   life: 22,
 };
@@ -50,6 +59,7 @@ const initialZIndex: Record<WindowKey, number> = {
 const initialOpenState: Record<WindowKey, boolean> = {
   home: true,
   work: false,
+  publications: false,
   create: false,
   life: false,
 };
@@ -317,6 +327,9 @@ export function Desktop() {
   const [zIndex, setZIndex] = useState(initialZIndex);
   const [maxZ, setMaxZ] = useState(30);
   const [selectedIcon, setSelectedIcon] = useState<IconKey | null>(null);
+  const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
+  const [publicationPdfMinimized, setPublicationPdfMinimized] = useState(false);
+  const [publicationPdfZ, setPublicationPdfZ] = useState(30);
   const [homeLayout, setHomeLayout] = useState<{
     x: number;
     y: number;
@@ -346,10 +359,10 @@ export function Desktop() {
     : null;
   const [emailOpen, setEmailOpen] = useState(false);
   const [minimizedState, setMinimizedState] = useState<Record<WindowKey, boolean>>({
-    home: false, work: false, create: false, life: false,
+    home: false, work: false, publications: false, create: false, life: false,
   });
   const [maximizedState, setMaximizedState] = useState<Record<WindowKey, boolean>>({
-    home: false, work: false, create: false, life: false,
+    home: false, work: false, publications: false, create: false, life: false,
   });
   const [minimizedProjectState, setMinimizedProjectState] = useState<Record<string, boolean>>({});
   const [maximizedProjectState, setMaximizedProjectState] = useState<Record<string, boolean>>({});
@@ -378,6 +391,20 @@ export function Desktop() {
 
   const closeWindow = (key: WindowKey) => {
     setOpenState((prev) => ({ ...prev, [key]: false }));
+  };
+
+  const focusPublicationPdf = () => {
+    setMaxZ((prev) => {
+      const next = prev + 1;
+      setPublicationPdfZ(next);
+      return next;
+    });
+  };
+
+  const openPublicationPdf = (publication: Publication) => {
+    setSelectedPublication(publication);
+    setPublicationPdfMinimized(false);
+    focusPublicationPdf();
   };
 
   const focusWindow = (key: WindowKey) => {
@@ -575,8 +602,9 @@ export function Desktop() {
     }
 
     hasSeededInitialStickers.current = true;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    // Generate positions in the unscaled desktop's coordinate space.
+    const desktopWidth = window.innerWidth / desktopScale;
+    const desktopHeight = window.innerHeight / desktopScale;
     const generated: Sticker[] = [];
     const maxAttempts = INITIAL_STICKER_COUNT * 40;
 
@@ -586,8 +614,8 @@ export function Desktop() {
       const src = stickerImages[Math.floor(Math.random() * stickerImages.length)];
       const baseSize = 44 + Math.floor(Math.random() * 26);
       const size = getStickerSize(src, baseSize);
-      const x = size / 2 + Math.random() * Math.max(1, vw - size);
-      const y = size / 2 + Math.random() * Math.max(1, vh - size);
+      const x = size / 2 + Math.random() * Math.max(1, desktopWidth - size);
+      const y = size / 2 + Math.random() * Math.max(1, desktopHeight - size);
 
       const collidesTooMuch = generated.some((sticker) => {
         const dx = sticker.x - x;
@@ -620,21 +648,15 @@ export function Desktop() {
 
           <div className="min-h-0 flex-1 overflow-y-auto">
             {WORK_PROJECTS.map((project) => (
-              <button
+              <ResearchListCard
                 key={project.id}
-                type="button"
                 onClick={() => setMobileWorkProjectId(project.id)}
-                className="win98-outset mb-3 block w-full bg-white p-3 text-left last:mb-0"
-              >
-                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#6a5acd]">
-                  {project.type}
-                </p>
-                <h3 className="mt-1 text-base font-bold leading-5 text-[#272727]">{project.title}</h3>
-                <p className="mt-1 text-xs leading-4 text-[#464646]">{project.summary}</p>
-                <span className="mt-2 inline-block bg-[#ff1493] px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#98ff98]">
-                  {project.status}
-                </span>
-              </button>
+                mobile
+                eyebrow={project.type}
+                title={project.title}
+                description={project.summary}
+                badge={project.status}
+              />
             ))}
           </div>
         </section>
@@ -663,6 +685,7 @@ export function Desktop() {
   const minimizedWindowChips = [
     openState.home && minimizedState.home ? { key: "home" as WindowKey, label: "Home" } : null,
     openState.work && minimizedState.work ? { key: "work" as WindowKey, label: "My Works" } : null,
+    openState.publications && minimizedState.publications ? { key: "publications" as WindowKey, label: "Publications" } : null,
     openState.create && minimizedState.create ? { key: "create" as WindowKey, label: "Music" } : null,
     openState.life && minimizedState.life ? { key: "life" as WindowKey, label: "Art" } : null,
   ]
@@ -767,6 +790,8 @@ export function Desktop() {
               </article>
             ) : mobileSection === "work" ? (
               renderMobileWorkContent()
+            ) : mobileSection === "publications" ? (
+              <Publications mobile />
             ) : mobileSection === "music" ? (
               <section className="h-full overflow-hidden rounded border border-black/20 bg-white">
                 <CreateWindow />
@@ -847,7 +872,7 @@ export function Desktop() {
         </section>
 
         <nav className="win98-outset absolute bottom-0 left-0 right-0 z-50 h-[52px] bg-winGrey px-2 pb-[max(env(safe-area-inset-bottom),2px)] pt-1">
-          <div className="flex h-full items-center gap-1">
+          <div className="flex h-full items-center gap-1 overflow-x-auto">
             <button
               type="button"
               onClick={() => {
@@ -858,6 +883,17 @@ export function Desktop() {
             >
               <Folder size={12} />
               Work
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileSection("publications");
+                setMobileWorkProjectId(null);
+              }}
+              className={`win98-outset flex shrink-0 items-center justify-center gap-1 px-1.5 py-1 text-xs font-bold ${mobileSection === "publications" ? "bg-[#d2ccff]" : "bg-[#efefef]"}`}
+            >
+              <BookOpen size={12} />
+              Publications
             </button>
             <button
               type="button"
@@ -942,6 +978,10 @@ export function Desktop() {
                 handleDesktopItemClick(item.key);
                 if (item.key === "about") openWindow("home");
                 else if (item.key === "work") openWindow("work");
+                else if (item.key === "publications") {
+                  openWindow("publications");
+                  setMinimizedState((prev) => ({ ...prev, publications: false }));
+                }
                 else openWindow(item.key as FolderKey);
               }}
               className={`active relative flex w-20 flex-col items-center gap-1 p-0.5 text-center text-sm text-black active:translate-x-px active:translate-y-px ${
@@ -957,6 +997,8 @@ export function Desktop() {
               >
                 {item.key === "about" ? (
                   <FileText size={24} strokeWidth={1.75} className="text-[#313172]" />
+                ) : item.key === "publications" ? (
+                  <BookOpen size={24} strokeWidth={1.75} className="text-[#2454a4]" />
                 ) : item.key === "create" ? (
                   <Music size={24} strokeWidth={1.75} className="text-[#c4006e]" />
                 ) : item.key === "life" ? (
@@ -968,7 +1010,7 @@ export function Desktop() {
                   <span className="pointer-events-none absolute inset-0 bg-[#4c6fff]/25" />
                 ) : null}
               </span>
-              <span className="bg-white/50 px-1">{item.label}</span>
+              <span className="whitespace-nowrap bg-white/50 px-1">{item.label}</span>
             </button>
           ))}
         </section>
@@ -1018,7 +1060,7 @@ export function Desktop() {
             title="My Works"
             isOpen={openState.work && !minimizedState.work}
             zIndex={zIndex.work}
-            gradientColors={["#FF1493", "#FF69B4"]}
+            gradientColors={workWindowGradient}
             defaultPosition={{ x: 160, y: 80 }}
             defaultSize={{ width: 740, height: 520 }}
             minSize={{ width: 460, height: 300 }}
@@ -1030,6 +1072,34 @@ export function Desktop() {
           >
             <MyWorks onOpenProject={openProjectWindow} />
           </RetroWindow>
+
+          <RetroWindow
+            title="Publications"
+            isOpen={openState.publications && !minimizedState.publications}
+            zIndex={zIndex.publications}
+            gradientColors={publicationsWindowGradient}
+            defaultPosition={{ x: 200, y: 100 }}
+            defaultSize={{ width: 780, height: 600 }}
+            minSize={{ width: 380, height: 280 }}
+            onClose={() => closeWindow("publications")}
+            onFocus={() => focusWindow("publications")}
+            onMinimize={() => minimizeWindow("publications")}
+            onMaximize={() => toggleMaximizeWindow("publications")}
+            isMaximized={maximizedState.publications}
+          >
+            <Publications onOpenPublication={openPublicationPdf} />
+          </RetroWindow>
+
+          <PublicationPdfWindow
+            publication={selectedPublication}
+            desktopScale={desktopScale}
+            gradientColors={publicationsWindowGradient}
+            zIndex={publicationPdfZ}
+            minimized={publicationPdfMinimized}
+            onClose={() => setSelectedPublication(null)}
+            onFocus={focusPublicationPdf}
+            onMinimize={() => setPublicationPdfMinimized(true)}
+          />
 
           {WORK_PROJECTS.map((project, index) =>
             project.id === "p1" ? (
@@ -1232,7 +1302,18 @@ export function Desktop() {
 
         <Taskbar
           onEmailClick={() => setEmailOpen(true)}
-          minimizedWindows={[...minimizedWindowChips, ...minimizedProjectChips]}
+          minimizedWindows={[
+            ...minimizedWindowChips,
+            ...minimizedProjectChips,
+            ...(selectedPublication && publicationPdfMinimized ? [{
+              key: "publication-pdf",
+              label: `PDF · ${selectedPublication.venue}`,
+              onRestore: () => {
+                setPublicationPdfMinimized(false);
+                focusPublicationPdf();
+              },
+            }] : []),
+          ]}
         />
       </div>
     </main>
