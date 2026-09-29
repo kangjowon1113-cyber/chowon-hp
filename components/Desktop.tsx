@@ -13,8 +13,10 @@ import { RetroWindow } from "@/components/RetroWindow";
 import { Taskbar } from "@/components/Taskbar";
 import { CreateWindow } from "@/components/CreateWindow";
 import { DatingAlgorithmsPrototype } from "@/components/works/debugging-dating-algorithms/DatingAlgorithmsPrototype";
+import { LegacyDatingAlgorithmsContent } from "@/components/works/debugging-dating-algorithms/LegacyDatingAlgorithmsContent";
 import { AIModeratorsContent } from "@/components/works/ai-moderators/AIModeratorsContent";
 import { KoreanEmoticonsContent } from "@/components/works/understanding-korean-emoticons/KoreanEmoticonsContent";
+import { CompassTravelMateContent } from "@/components/works/compass-travel-mate/CompassTravelMateContent";
 
 type FolderKey = "work" | "publications" | "create" | "life";
 type IconKey = "about" | FolderKey;
@@ -47,6 +49,8 @@ const desktopItems: Array<{ key: IconKey; label: string }> = [
 // Primary and accent colors from design-system.md, paired by window like Music and Art.
 const workWindowGradient: [string, string] = ["#FF79C6", "#A29BFE"];
 const publicationsWindowGradient: [string, string] = ["#000080", "#A29BFE"];
+const DATING_DEMO_ID = "dating-demo";
+const DATING_DEMO_TITLE = "Datemate · Profile demo";
 
 const initialZIndex: Record<WindowKey, number> = {
   home: 24,
@@ -241,30 +245,12 @@ const ARTWORK_GROUPS: ArtworkGroup[] = [
       },
     ],
   },
-  {
-    id: "nude-croquis",
-    title: "Nude Croquis",
-    thumbnail: "/create/drawing/nude croquis 1.jpg",
-    images: [
-      { src: "/create/drawing/nude croquis 1.jpg" },
-      { src: "/create/drawing/nude croquis 2.jpg" },
-      { src: "/create/drawing/nude croquis 3.jpg" },
-      { src: "/create/drawing/nude croquis 4.jpg" },
-      { src: "/create/drawing/nude croquis 5.jpg" },
-    ],
-  },
-  {
-    id: "girl",
-    title: "Girl",
-    thumbnail: "/create/drawing/Girl.jpg",
-    images: [{ src: "/create/drawing/Girl.jpg" }],
-  },
 ];
 
-/** Art 목록 창 기본 위치·크기 — 작품 상세 창은 이 오른쪽에 붙여 배치 */
-const ART_BROWSER_WINDOW = {
-  defaultPosition: { x: 280, y: 120 },
-  defaultSize: { width: 600, height: 400 },
+/** Art and Music open against the right edge in desktop coordinates. */
+const CREATIVE_WINDOW_SIZES = {
+  life: { width: 600, height: 400 },
+  create: { width: 936, height: 624 },
 } as const;
 
 /** 상세 뷰: 이미지가 세로로 창을 넘지 않도록 감싼 뒤 스케일 */
@@ -349,6 +335,9 @@ export function Desktop() {
   );
   const [stickers, setStickers] = useState<Sticker[]>([]);
   const [selectedArtworkGroupId, setSelectedArtworkGroupId] = useState<string | null>(null);
+  const [creativeWindowLayouts, setCreativeWindowLayouts] = useState<
+    Partial<Record<"life" | "create", ProjectWindowLayout>>
+  >({});
   const [artworkWindowLayout, setArtworkWindowLayout] = useState<ProjectWindowLayout | null>(null);
   const [artworkWindowZ, setArtworkWindowZ] = useState(40);
   const mobileArtworkDetailScrollRef = useRef<HTMLDivElement | null>(null);
@@ -366,6 +355,9 @@ export function Desktop() {
   });
   const [minimizedProjectState, setMinimizedProjectState] = useState<Record<string, boolean>>({});
   const [maximizedProjectState, setMaximizedProjectState] = useState<Record<string, boolean>>({});
+  const datingDemoButtonRef = useRef<HTMLButtonElement | null>(null);
+  const datingDemoWindowRef = useRef<HTMLDivElement | null>(null);
+  const datingDemoOpen = Boolean(projectWindowState[DATING_DEMO_ID]);
 
   const getStickerSize = (src: string, baseSize: number) => {
     return src === "/stickers/Group 2.png" ? Math.max(14, Math.round(baseSize / 3)) : baseSize;
@@ -381,6 +373,27 @@ export function Desktop() {
   });
 
   const openWindow = (key: WindowKey) => {
+    if (key === "life" || key === "create") {
+      const margin = 48;
+      const desktopWidth = window.innerWidth / desktopScale;
+      const desktopHeight = (window.innerHeight - 40) / desktopScale;
+      const size = CREATIVE_WINDOW_SIZES[key];
+      const width = Math.min(size.width, desktopWidth - margin * 2);
+      const height = Math.min(size.height, desktopHeight - margin * 2);
+      setCreativeWindowLayouts((prev) => ({
+        ...prev,
+        [key]: {
+          x: desktopWidth - width - margin,
+          y: key === "life" ? desktopHeight - height - margin : margin,
+          width,
+          height,
+        },
+      }));
+      setMinimizedState((prev) => ({ ...prev, [key]: false }));
+      if (!openState[key]) {
+        setMaximizedState((prev) => ({ ...prev, [key]: false }));
+      }
+    }
     setMaxZ((prev) => {
       const next = prev + 1;
       setZIndex((old) => ({ ...old, [key]: next }));
@@ -463,18 +476,14 @@ export function Desktop() {
       setProjectWindowZ((old) => ({ ...old, [projectId]: next }));
       return next;
     });
-    if (projectId === "p1" || projectId === "p2" || projectId === "p3") {
+    if (projectId === "p1" || projectId === "p2" || projectId === "p3" || projectId === "p4") {
       setProjectWindowLayout((prev) => ({ ...prev, [projectId]: getProjectCanvasLayout() }));
-      if (projectId === "p1") {
-        setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "rounded" }));
-        setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
-      } else {
-        setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "window" }));
-        setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "solid" }));
-      }
+      setProjectWindowFrame((prev) => ({ ...prev, [projectId]: "window" }));
+      setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "solid" }));
     } else {
       setProjectWindowSurface((prev) => ({ ...prev, [projectId]: "translucent" }));
     }
+    setMinimizedProjectState((prev) => ({ ...prev, [projectId]: false }));
     setProjectWindowState((prev) => ({ ...prev, [projectId]: true }));
   };
 
@@ -492,22 +501,56 @@ export function Desktop() {
     });
   };
 
+  const openDatingDemo = () => {
+    if (!datingDemoOpen) {
+      const margin = 24;
+      const desktopWidth = window.innerWidth / desktopScale;
+      const desktopHeight = (window.innerHeight - 40) / desktopScale;
+      const width = Math.min(940, desktopWidth - margin * 2);
+      const height = Math.min(720, desktopHeight - margin * 2);
+      setProjectWindowLayout((prev) => ({
+        ...prev,
+        [DATING_DEMO_ID]: {
+          x: Math.max(margin, desktopWidth - width - margin),
+          y: Math.max(margin, Math.round((desktopHeight - height) / 2)),
+          width,
+          height,
+        },
+      }));
+      setMaximizedProjectState((prev) => ({ ...prev, [DATING_DEMO_ID]: false }));
+    }
+    setProjectWindowState((prev) => ({ ...prev, [DATING_DEMO_ID]: true }));
+    restoreProjectWindow(DATING_DEMO_ID);
+    requestAnimationFrame(() => {
+      datingDemoWindowRef.current?.querySelector<HTMLButtonElement>("[data-demo-return]")?.focus();
+    });
+  };
+
+  const returnToDatingStudy = () => {
+    setProjectWindowState((prev) => ({ ...prev, [DATING_DEMO_ID]: false }));
+    if (!isMobile) {
+      if (projectWindowState.p1) restoreProjectWindow("p1");
+      else openProjectWindow("p1");
+    }
+    requestAnimationFrame(() => datingDemoButtonRef.current?.focus({ preventScroll: true }));
+  };
+
   const getArtworkDetailLayout = (): ProjectWindowLayout => {
     const margin = 24;
     const taskbarHeight = 40;
     const desktopWidth = window.innerWidth / desktopScale;
     const desktopHeight = (window.innerHeight - taskbarHeight) / desktopScale;
 
-    const artRight = ART_BROWSER_WINDOW.defaultPosition.x + ART_BROWSER_WINDOW.defaultSize.width;
-    const gap = -32;
-    const maxWRight = desktopWidth - margin - (artRight + gap);
-    const maxH = desktopHeight - margin * 2;
-    const rawSide = Math.min(maxWRight, maxH, 640);
-    const side = Math.max(360, Math.min(640, Math.floor(rawSide)));
+    const artLayout = creativeWindowLayouts.life ?? { x: margin, y: margin, ...CREATIVE_WINDOW_SIZES.life };
+    const gap = 24;
+    const side = Math.min(640, desktopWidth - margin * 2, desktopHeight - margin * 2);
 
-    let x = artRight + gap;
+    let x = artLayout.x + artLayout.width + gap;
     if (x + side > desktopWidth - margin) {
-      x = desktopWidth - margin - side;
+      x = artLayout.x - side - gap;
+    }
+    if (x < margin) {
+      x = (desktopWidth - side) / 2;
     }
     x = Math.max(margin, x);
 
@@ -572,6 +615,7 @@ export function Desktop() {
   }, []);
 
   useEffect(() => {
+    setProjectWindowState((prev) => prev[DATING_DEMO_ID] ? { ...prev, [DATING_DEMO_ID]: false } : prev);
     if (!isMobile) {
       return;
     }
@@ -579,6 +623,17 @@ export function Desktop() {
     setMobileWorkProjectId(null);
     setSelectedArtworkGroupId(null);
   }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || !datingDemoOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setProjectWindowState((prev) => ({ ...prev, [DATING_DEMO_ID]: false }));
+      requestAnimationFrame(() => datingDemoButtonRef.current?.focus({ preventScroll: true }));
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isMobile, datingDemoOpen]);
 
   useEffect(() => {
     setOpenState((prev) => ({ ...prev, home: true }));
@@ -667,11 +722,13 @@ export function Desktop() {
       <section className="flex h-full min-h-0 flex-col">
         <div className="min-h-0 flex-1 overflow-auto rounded border border-black/20 bg-white">
           {mobileWorkProjectId === "p1" ? (
-            <DatingAlgorithmsPrototype />
+            <LegacyDatingAlgorithmsContent onTryDemo={openDatingDemo} demoButtonRef={datingDemoButtonRef} />
           ) : mobileWorkProjectId === "p2" ? (
             <AIModeratorsContent />
           ) : mobileWorkProjectId === "p3" ? (
             <KoreanEmoticonsContent />
+          ) : mobileWorkProjectId === "p4" ? (
+            <CompassTravelMateContent />
           ) : (
             <div className="p-4 text-sm text-[#404040]">
               This project is being prepared for mobile presentation.
@@ -697,12 +754,55 @@ export function Desktop() {
     .map((p) => ({ key: p.id, label: p.title, onRestore: () => restoreProjectWindow(p.id) }));
 
   if (isMobile) {
-    // Dating algorithms: full-screen with no nav bar
+    if (mobileWorkProjectId === "p4") {
+      return (
+        <main className="flex h-[100dvh] w-screen flex-col overflow-hidden bg-white font-system98 text-[#111]">
+          <div className="shrink-0 border-b border-black/15 bg-white px-3 py-2">
+            <button
+              type="button"
+              onClick={() => setMobileWorkProjectId(null)}
+              className="win98-outset min-h-10 bg-winGrey px-3 py-1 text-xs font-bold"
+            >
+              ← Back to Work
+            </button>
+          </div>
+          <div className="min-h-0 flex-1 pb-[env(safe-area-inset-bottom)]">
+            <CompassTravelMateContent />
+          </div>
+        </main>
+      );
+    }
+
+    // Keep the study mounted underneath the demo so its scroll position is retained.
     if (mobileWorkProjectId === "p1") {
       return (
-        <main className="relative h-screen w-screen overflow-hidden font-system98 text-[#111]">
+        <main className="relative h-[100dvh] w-screen overflow-hidden bg-white font-system98 text-[#111]">
           <EmailComposeWindow isOpen={emailOpen} zIndex={9999} onClose={() => setEmailOpen(false)} />
-          <DatingAlgorithmsPrototype onBack={() => setMobileWorkProjectId(null)} />
+          <div className="flex h-full flex-col" inert={datingDemoOpen || undefined}>
+            <div className="shrink-0 border-b border-black/15 bg-white px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setMobileWorkProjectId(null)}
+                className="win98-outset min-h-10 bg-winGrey px-3 py-1 text-xs font-bold"
+              >
+                ← Back to Work
+              </button>
+            </div>
+            <div className="min-h-0 flex-1">
+              <LegacyDatingAlgorithmsContent onTryDemo={openDatingDemo} demoButtonRef={datingDemoButtonRef} />
+            </div>
+          </div>
+          {datingDemoOpen ? (
+            <div
+              ref={datingDemoWindowRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label={DATING_DEMO_TITLE}
+              className="absolute inset-0 z-50 bg-white pb-[env(safe-area-inset-bottom)]"
+            >
+              <DatingAlgorithmsPrototype isMobile onBackToStudy={returnToDatingStudy} />
+            </div>
+          ) : null}
         </main>
       );
     }
@@ -1103,31 +1203,27 @@ export function Desktop() {
 
           {WORK_PROJECTS.map((project, index) =>
             project.id === "p1" ? (
-              <FloatingCanvasWindow
-                key={project.id}
-                title={project.title}
-                isOpen={Boolean(projectWindowState[project.id]) && !minimizedProjectState[project.id]}
-                zIndex={projectWindowZ[project.id] ?? 10}
-                defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
-                defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
-                minSize={{ width: 860, height: 680 }}
-                surfaceMode={projectWindowSurface[project.id] ?? "translucent"}
-                frameMode={projectWindowFrame[project.id] ?? "rounded"}
-                onClose={() => closeProjectWindow(project.id)}
-                onFocus={() => focusProjectWindow(project.id)}
-                onMinimize={() => minimizeProjectWindow(project.id)}
-                onMaximize={() => toggleMaximizeProjectWindow(project.id)}
-                isMaximized={Boolean(maximizedProjectState[project.id])}
-              >
-                <DatingAlgorithmsPrototype
-                  onSurfaceModeChange={(surfaceMode) =>
-                    setProjectWindowSurface((prev) => ({ ...prev, [project.id]: surfaceMode }))
-                  }
-                  onFrameModeChange={(frameMode) =>
-                    setProjectWindowFrame((prev) => ({ ...prev, [project.id]: frameMode }))
-                  }
-                />
-              </FloatingCanvasWindow>
+              <div key={project.id} className={minimizedProjectState[project.id] ? "hidden" : "pointer-events-none absolute inset-0 [&>*]:pointer-events-auto"}>
+                <FloatingCanvasWindow
+                  title={project.title}
+                  isOpen={Boolean(projectWindowState[project.id])}
+                  zIndex={projectWindowZ[project.id] ?? 10}
+                  defaultPosition={projectWindowLayout[project.id] ?? { x: 300, y: 36 }}
+                  defaultSize={projectWindowLayout[project.id] ?? { width: 1280, height: 840 }}
+                  minSize={{ width: 860, height: 680 }}
+                  surfaceMode="solid"
+                  frameMode="window"
+                  onClose={() => closeProjectWindow(project.id)}
+                  onFocus={() => focusProjectWindow(project.id)}
+                  onMinimize={() => minimizeProjectWindow(project.id)}
+                  onMaximize={() => toggleMaximizeProjectWindow(project.id)}
+                  isMaximized={Boolean(maximizedProjectState[project.id])}
+                >
+                  <div className="h-full" onMouseDown={() => focusProjectWindow(project.id)}>
+                    <LegacyDatingAlgorithmsContent onTryDemo={openDatingDemo} demoButtonRef={datingDemoButtonRef} />
+                  </div>
+                </FloatingCanvasWindow>
+              </div>
             ) : project.id === "p2" ? (
               <FloatingCanvasWindow
                 key={project.id}
@@ -1147,7 +1243,7 @@ export function Desktop() {
               >
                 <AIModeratorsContent />
               </FloatingCanvasWindow>
-            ) : project.id === "p3" ? (
+            ) : project.id === "p3" || project.id === "p4" ? (
               <FloatingCanvasWindow
                 key={project.id}
                 title={project.title}
@@ -1164,7 +1260,7 @@ export function Desktop() {
                 onMaximize={() => toggleMaximizeProjectWindow(project.id)}
                 isMaximized={Boolean(maximizedProjectState[project.id])}
               >
-                <KoreanEmoticonsContent />
+                {project.id === "p3" ? <KoreanEmoticonsContent /> : <CompassTravelMateContent />}
               </FloatingCanvasWindow>
             ) : (
               <RetroWindow
@@ -1184,13 +1280,39 @@ export function Desktop() {
             ),
           )}
 
+          {datingDemoOpen ? (
+            <div ref={datingDemoWindowRef} className={minimizedProjectState[DATING_DEMO_ID] ? "hidden" : "pointer-events-none absolute inset-0 [&>*]:pointer-events-auto"}>
+              <RetroWindow
+                title={DATING_DEMO_TITLE}
+                isOpen={datingDemoOpen}
+                zIndex={projectWindowZ[DATING_DEMO_ID] ?? 10}
+                gradientColors={workWindowGradient}
+                defaultPosition={projectWindowLayout[DATING_DEMO_ID] ?? { x: 340, y: 60 }}
+                defaultSize={projectWindowLayout[DATING_DEMO_ID] ?? { width: 940, height: 720 }}
+                minSize={{ width: 680, height: 480 }}
+                scale={desktopScale}
+                noPadding
+                keepMountedOnMaximize
+                onClose={returnToDatingStudy}
+                onFocus={() => focusProjectWindow(DATING_DEMO_ID)}
+                onMinimize={() => minimizeProjectWindow(DATING_DEMO_ID)}
+                onMaximize={() => toggleMaximizeProjectWindow(DATING_DEMO_ID)}
+                isMaximized={Boolean(maximizedProjectState[DATING_DEMO_ID])}
+                maximizedBottomInset={40 / desktopScale}
+              >
+                <DatingAlgorithmsPrototype onBackToStudy={returnToDatingStudy} />
+              </RetroWindow>
+            </div>
+          ) : null}
+
           <RetroWindow
             title="Music"
+            scale={desktopScale}
             isOpen={openState.create && !minimizedState.create}
             zIndex={zIndex.create}
             gradientColors={["#FF8C00", "#FFD700"]}
-            defaultPosition={{ x: 180, y: 20 }}
-            defaultSize={{ width: 936, height: 624 }}
+            defaultPosition={creativeWindowLayouts.create ?? { x: 48, y: 48 }}
+            defaultSize={creativeWindowLayouts.create ?? CREATIVE_WINDOW_SIZES.create}
             minSize={{ width: 420, height: 300 }}
             noPadding
             onClose={() => closeWindow("create")}
@@ -1204,11 +1326,12 @@ export function Desktop() {
 
           <RetroWindow
             title="Art"
+            scale={desktopScale}
             isOpen={openState.life && !minimizedState.life}
             zIndex={zIndex.life}
             gradientColors={["#87CEEB", "#98FF98"]}
-            defaultPosition={ART_BROWSER_WINDOW.defaultPosition}
-            defaultSize={ART_BROWSER_WINDOW.defaultSize}
+            defaultPosition={creativeWindowLayouts.life ?? { x: 48, y: 48 }}
+            defaultSize={creativeWindowLayouts.life ?? CREATIVE_WINDOW_SIZES.life}
             minSize={{ width: 280, height: 240 }}
             onClose={() => {
               closeWindow("life");
@@ -1246,6 +1369,7 @@ export function Desktop() {
           {selectedArtworkGroup ? (
             <RetroWindow
               title={selectedArtworkGroup.title}
+              scale={desktopScale}
               isOpen={openState.life && Boolean(selectedArtworkGroup)}
               zIndex={artworkWindowZ}
               gradientColors={["#87CEEB", "#98FF98"]}
@@ -1305,6 +1429,11 @@ export function Desktop() {
           minimizedWindows={[
             ...minimizedWindowChips,
             ...minimizedProjectChips,
+            ...(datingDemoOpen && minimizedProjectState[DATING_DEMO_ID] ? [{
+              key: DATING_DEMO_ID,
+              label: DATING_DEMO_TITLE,
+              onRestore: () => restoreProjectWindow(DATING_DEMO_ID),
+            }] : []),
             ...(selectedPublication && publicationPdfMinimized ? [{
               key: "publication-pdf",
               label: `PDF · ${selectedPublication.venue}`,
