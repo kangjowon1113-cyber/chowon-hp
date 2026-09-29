@@ -36,9 +36,9 @@ export const WORK_PROJECTS: ProjectItem[] = [
     id: "p4",
     title: "Compass as Your One and Only Travel Mate",
     type: "School Research Project",
-    status: "WORK EXPERIENCE",
+    status: "DESIGN PROTOTYPE",
     summary:
-      "A personal exploration and insights based on my experience working with AI moderation systems.",
+      "A handheld compass that sparks curiosity about new places and helps turn discoveries into personal memories and emotional connections.",
   },
 ];
 

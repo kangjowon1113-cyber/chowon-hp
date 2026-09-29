@@ -1,3 +1,6 @@
+import { ArrowUpRight, Heart } from "lucide-react";
+import { type Ref } from "react";
+
 const insights = [
   {
     content: (
@@ -82,9 +85,17 @@ const tinderMatchImageSrc = "/works/debugging-dating-algorithms/tinder%20match.p
 const attractivenessDataImageSrc =
   "/works/debugging-dating-algorithms/%EB%A7%A4%EB%A0%A5%20%EB%8D%B0%EC%9D%B4%ED%84%B0.png";
 
-export function LegacyDatingAlgorithmsContent() {
+type LegacyDatingAlgorithmsContentProps = {
+  onTryDemo: () => void;
+  demoButtonRef?: Ref<HTMLButtonElement>;
+};
+
+export function LegacyDatingAlgorithmsContent({
+  onTryDemo,
+  demoButtonRef,
+}: LegacyDatingAlgorithmsContentProps) {
   return (
-    <section className="h-full w-full overflow-y-auto bg-white p-3 text-[#1b1b1b] sm:p-5">
+    <section aria-label="Dating algorithms study" className="retro-scrollbar h-full w-full overflow-y-auto bg-white p-3 text-[#1b1b1b] sm:p-5">
       <h2 className="text-base font-bold text-[#2f2f2f] sm:text-xl">
         Debugging Dating Algorithms: How Can We Find True Love?
       </h2>
@@ -550,6 +561,34 @@ export function LegacyDatingAlgorithmsContent() {
           </div>
         </div>
       </div>
+      <aside className="mt-8 border-t border-[#e8e4e8] pb-2 pt-6">
+        <div className="win98-outset flex flex-col gap-5 bg-[#f5f0ff] p-5 sm:flex-row sm:items-center sm:p-6">
+          <div aria-hidden="true" className="win98-outset flex h-14 w-14 shrink-0 items-center justify-center bg-[#ffe5ef] text-[#bd3c76]">
+            <Heart size={26} strokeWidth={1.5} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#6a5acd]">
+              Interactive prototype
+            </p>
+            <h3 className="mt-2 text-lg font-bold text-[#302a42]">
+              Explore the profile concept
+            </h3>
+            <p className="mt-2 max-w-lg text-sm leading-6 text-[#5b5368]">
+              See how different profiles highlight different sides of the same person.
+              Try the dating app concept inspired by this study.
+            </p>
+            <button
+              ref={demoButtonRef}
+              type="button"
+              onClick={onTryDemo}
+              className="win98-outset mt-4 inline-flex min-h-11 items-center justify-center gap-3 bg-[#6a5acd] px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#5848b8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#6a5acd] active:translate-x-px active:translate-y-px"
+            >
+              Try the demo
+              <ArrowUpRight size={17} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </aside>
     </section>
   );
 }

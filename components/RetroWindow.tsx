@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { Rnd } from "react-rnd";
 
 type RetroWindowProps = {
@@ -19,6 +19,7 @@ type RetroWindowProps = {
   onMaximize?: () => void;
   isMaximized?: boolean;
   maximizedBottomInset?: number;
+  keepMountedOnMaximize?: boolean;
   scale?: number;
   children?: ReactNode;
 };
@@ -39,9 +40,15 @@ export function RetroWindow({
   onMaximize,
   isMaximized = false,
   maximizedBottomInset = 0,
+  keepMountedOnMaximize = false,
   scale = 1,
   children,
 }: RetroWindowProps) {
+  const [restoredLayout, setRestoredLayout] = useState(() => ({
+    position: defaultPosition,
+    size: defaultSize,
+  }));
+
   if (!isOpen) return null;
 
   const handleZ = 50;
@@ -101,7 +108,7 @@ export function RetroWindow({
     </section>
   );
 
-  if (isMaximized) {
+  if (isMaximized && !keepMountedOnMaximize) {
     return (
       <div className="absolute inset-0" style={{ zIndex, bottom: maximizedBottomInset }}>
         {windowContent}
@@ -117,7 +124,8 @@ export function RetroWindow({
       bounds="parent"
       dragHandleClassName="retro-window-handle"
       cancel=".retro-resize-handle"
-      enableResizing={{
+      disableDragging={keepMountedOnMaximize && isMaximized}
+      enableResizing={keepMountedOnMaximize && isMaximized ? false : {
         top: true,
         right: true,
         bottom: true,
@@ -133,10 +141,29 @@ export function RetroWindow({
         width: defaultSize.width,
         height: defaultSize.height,
       }}
-      minWidth={minSize.width}
-      minHeight={minSize.height}
+      position={keepMountedOnMaximize ? (isMaximized ? { x: 0, y: 0 } : restoredLayout.position) : undefined}
+      size={keepMountedOnMaximize ? (isMaximized ? {
+        width: "100%",
+        height: `calc(100% - ${maximizedBottomInset}px)`,
+      } : restoredLayout.size) : undefined}
+      minWidth={keepMountedOnMaximize && isMaximized ? 0 : minSize.width}
+      minHeight={keepMountedOnMaximize && isMaximized ? 0 : minSize.height}
       onDragStart={onFocus}
+      onDragStop={keepMountedOnMaximize ? (_event, data) => {
+        if (isMaximized) return;
+        setRestoredLayout((layout) => ({
+          ...layout,
+          position: { x: data.x, y: data.y },
+        }));
+      } : undefined}
       onResizeStart={onFocus}
+      onResizeStop={keepMountedOnMaximize ? (_event, _direction, element, _delta, position) => {
+        if (isMaximized) return;
+        setRestoredLayout({
+          position,
+          size: { width: element.offsetWidth, height: element.offsetHeight },
+        });
+      } : undefined}
       resizeHandleStyles={resizeHandleStyles}
       resizeHandleWrapperStyle={{ zIndex: handleZ, pointerEvents: "none" }}
       resizeHandleClasses={{
