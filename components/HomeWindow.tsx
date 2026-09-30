@@ -50,7 +50,7 @@ export function HomeWindow({
 }: HomeWindowProps) {
   return (
     <RetroWindow
-      title="Home"
+      title="About Me"
       isOpen={isOpen}
       zIndex={zIndex}
       gradientColors={["#FF69B4", "#39FF14"]}
