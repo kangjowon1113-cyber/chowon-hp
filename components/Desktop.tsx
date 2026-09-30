@@ -740,8 +740,8 @@ export function Desktop() {
   };
 
   const minimizedWindowChips = [
-    openState.home && minimizedState.home ? { key: "home" as WindowKey, label: "Home" } : null,
-    openState.work && minimizedState.work ? { key: "work" as WindowKey, label: "My Works" } : null,
+    openState.home && minimizedState.home ? { key: "home" as WindowKey, label: "About Me" } : null,
+    openState.work && minimizedState.work ? { key: "work" as WindowKey, label: "Work" } : null,
     openState.publications && minimizedState.publications ? { key: "publications" as WindowKey, label: "Publications" } : null,
     openState.create && minimizedState.create ? { key: "create" as WindowKey, label: "Music" } : null,
     openState.life && minimizedState.life ? { key: "life" as WindowKey, label: "Art" } : null,
@@ -1157,7 +1157,7 @@ export function Desktop() {
           ) : null}
 
           <RetroWindow
-            title="My Works"
+            title="Work"
             isOpen={openState.work && !minimizedState.work}
             zIndex={zIndex.work}
             gradientColors={workWindowGradient}
