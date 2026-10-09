@@ -1,6 +1,7 @@
 "use client";
 
 import { RetroWindow } from "@/components/RetroWindow";
+import { profileBio, profileTags } from "@/components/profileContent";
 
 type HomeWindowProps = {
   isOpen: boolean;
@@ -19,22 +20,6 @@ const mainPhoto = {
   title: "Photo 01",
   src: "/home/1_PC.jpg",
 };
-
-const stats = [
-  { label: "User Insight", value: 92, color: "bg-[#7b68ee]" },
-  { label: "Problem Solving", value: 88, color: "bg-[#4cc9f0]" },
-  { label: "Storytelling", value: 83, color: "bg-[#ff4d8d]" },
-  { label: "Visual Taste", value: 90, color: "bg-[#f9c74f]" },
-];
-
-/** Candy-pop button bg + keyword text color (user-specified hex per tag). */
-const profileTags = [
-  { label: "#HCI_Researcher", textColor: "#98FF98", bgColor: "#FF1493" },
-  { label: "#Product_Manager", textColor: "#FF69B4", bgColor: "#98FF98" },
-  { label: "#Architecture_Designer", textColor: "#FF8C00", bgColor: "#E6B6FF" },
-  { label: "#Music", textColor: "#E6E6FA", bgColor: "#FF6B35" },
-  { label: "#Maximalist", textColor: "#FFF700", bgColor: "#BA55D3" },
-] as const;
 
 export function HomeWindow({
   isOpen,
@@ -74,21 +59,16 @@ export function HomeWindow({
           </div>
         </section>
 
-        <section className="grid min-h-0 h-full grid-rows-[minmax(0,1fr)_minmax(88px,0.24fr)] gap-3">
-          <article className="win98-inset min-h-0 overflow-y-auto bg-white p-3">
+        <section className="min-h-0 h-full">
+          <article className="win98-inset h-full min-h-0 overflow-y-auto bg-white p-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-[#6a5acd]">Profile Card</p>
             <h3 className="mt-1 text-2xl font-black tracking-wide">CHOWON</h3>
             <p className="text-sm font-bold text-[#4f4f7f]">HCI Researcher · Product Manager · Seoul</p>
-            <p className="mt-2 text-sm leading-5">
-              I&apos;m an HCI researcher and Product Manager based in Seoul, passionate about
-              enhancing social and emotional connections in digital spaces.
-            </p>
-            <p className="mt-2 text-sm leading-5">
-              With a background in interior architecture, I&apos;ve long been fascinated by how
-              physical environments shape human experience — a perspective I now bring to designing
-              online interactions. Beyond the screen, I find balance in music, experimenting in the
-              kitchen, and collecting moments from the world with curiosity.
-            </p>
+            {profileBio.map((paragraph) => (
+              <p key={paragraph} className="mt-2 text-sm leading-5">
+                {paragraph}
+              </p>
+            ))}
             <div className="mt-3 border-t-2 border-[#c0c0c0] pt-3">
               <div className="flex flex-wrap gap-2">
                 {profileTags.map((item) => (
@@ -101,22 +81,6 @@ export function HomeWindow({
                   </span>
                 ))}
               </div>
-            </div>
-          </article>
-
-          <article className="win98-inset min-h-0 overflow-y-auto bg-white p-3">
-            <div className="space-y-3">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <div className="mb-1 flex items-center justify-between text-xs font-bold">
-                    <span>{stat.label}</span>
-                    <span>{stat.value}</span>
-                  </div>
-                  <div className="win98-inset h-4 bg-[#efefef] p-[2px]">
-                    <div className={`h-full ${stat.color}`} style={{ width: `${stat.value}%` }} />
-                  </div>
-                </div>
-              ))}
             </div>
           </article>
         </section>

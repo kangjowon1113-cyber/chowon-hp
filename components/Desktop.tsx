@@ -5,6 +5,7 @@ import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from "re
 import { EmailComposeWindow } from "@/components/EmailComposeWindow";
 import { FloatingCanvasWindow } from "@/components/FloatingCanvasWindow";
 import { HomeWindow } from "@/components/HomeWindow";
+import { profileBio, profileTags } from "@/components/profileContent";
 import { MyWorks, WORK_PROJECTS } from "@/components/MyWorks";
 import { Publications, type Publication } from "@/components/Publications";
 import { PublicationPdfWindow } from "@/components/PublicationPdfWindow";
@@ -271,21 +272,6 @@ const ARTWORK_DETAIL_IMG_WRAP_PROMINENT_CLASS =
   "flex w-full max-h-[min(65vmin,648px)] min-h-0 justify-center overflow-hidden";
 const ARTWORK_DETAIL_IMG_WRAP_PROMINENT_MOBILE_CLASS =
   "flex w-full max-h-[min(58vmin,432px)] min-h-0 justify-center overflow-hidden";
-
-const profileTags = [
-  { label: "#HCI_Researcher", textColor: "#98FF98", bgColor: "#FF1493" },
-  { label: "#Product_Manager", textColor: "#FF69B4", bgColor: "#98FF98" },
-  { label: "#Architecture_Designer", textColor: "#FF8C00", bgColor: "#E6B6FF" },
-  { label: "#Music", textColor: "#E6E6FA", bgColor: "#FF6B35" },
-  { label: "#Maximalist", textColor: "#FFF700", bgColor: "#BA55D3" },
-] as const;
-
-const mobileStats = [
-  { label: "User Insight", value: 92, color: "bg-[#7b68ee]" },
-  { label: "Problem Solving", value: 88, color: "bg-[#4cc9f0]" },
-  { label: "Storytelling", value: 83, color: "bg-[#ff4d8d]" },
-  { label: "Visual Taste", value: 90, color: "bg-[#f9c74f]" },
-];
 
 type Sticker = {
   id: string;
@@ -848,15 +834,11 @@ export function Desktop() {
                   <p className="text-[11px] uppercase tracking-[0.16em] text-[#6a5acd]">Profile Card</p>
                   <h1 className="mt-1 text-2xl font-black tracking-wide">CHOWON</h1>
                   <p className="text-sm font-bold text-[#4f4f7f]">HCI Researcher · Product Manager · Seoul</p>
-                  <p className="mt-2 text-sm leading-5">
-                    I&apos;m an HCI researcher and Product Manager based in Seoul, passionate about
-                    enhancing social and emotional connections in digital spaces.
-                  </p>
-                  <p className="mt-2 text-sm leading-5">
-                    With a background in interior architecture, I&apos;ve long been fascinated by how
-                    physical environments shape human experience — a perspective I now bring to designing
-                    online interactions.
-                  </p>
+                  {profileBio.map((paragraph) => (
+                    <p key={paragraph} className="mt-2 text-sm leading-5">
+                      {paragraph}
+                    </p>
+                  ))}
                   <div className="mt-3 border-t-2 border-[#c0c0c0] pt-3">
                     <div className="flex flex-wrap gap-2">
                       {profileTags.map((item) => (
@@ -869,22 +851,6 @@ export function Desktop() {
                         </span>
                       ))}
                     </div>
-                  </div>
-                </div>
-                <div className="win98-outset bg-white p-3">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-[#6a5acd]">RPG Stats</p>
-                  <div className="mt-2 space-y-2">
-                    {mobileStats.map((stat) => (
-                      <div key={stat.label}>
-                        <div className="mb-1 flex items-center justify-between text-xs font-bold">
-                          <span>{stat.label}</span>
-                          <span>{stat.value}</span>
-                        </div>
-                        <div className="win98-inset h-4 bg-[#efefef] p-[2px]">
-                          <div className={`h-full ${stat.color}`} style={{ width: `${stat.value}%` }} />
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </div>
               </article>
